@@ -1,0 +1,25 @@
+{
+  "recipebookApp": {
+    "shoppingList": {
+      "home": {
+        "title": "ShoppingLists",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Shopping List",
+        "createOrEditLabel": "Créer ou éditer un Shopping List",
+        "notFound": "Aucun Shopping List trouvé"
+      },
+      "created": "Un nouveau Shopping List a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Shopping List avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Shopping List avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Shopping List {{ id }} ?"
+      },
+      "detail": {
+        "title": "Shopping List"
+      },
+      "id": "ID",
+      "user": "User",
+      "ingredient": "Ingredient"
+    }
+  }
+}

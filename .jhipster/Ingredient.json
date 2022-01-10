@@ -1,0 +1,38 @@
+{
+  "name": "Ingredient",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "recipe",
+      "otherEntityRelationshipName": "ingredient",
+      "relationshipName": "recipe"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "shoppingList",
+      "otherEntityRelationshipName": "ingredient",
+      "relationshipName": "shoppingList"
+    }
+  ],
+  "javadoc": "Ingredient Entity",
+  "entityTableName": "ingredient",
+  "dto": "no",
+  "pagination": "infinite-scroll",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20220110063112"
+}

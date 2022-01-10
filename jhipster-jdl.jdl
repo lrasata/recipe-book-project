@@ -1,0 +1,40 @@
+/**
+ * Recipe Entity.
+ * @author lrasata.
+ */
+entity Recipe {
+	title String,
+	description String,
+    imagePath String
+}
+
+/**
+ * Ingredient Entity 
+ */
+entity Ingredient {
+	name String,
+	amount Long
+}
+
+/**
+ * ShoppingList Entity 
+ */
+entity ShoppingList {
+}
+
+
+relationship OneToOne {
+	Recipe{user} to User,
+    ShoppingList{user} to User
+}
+
+
+relationship OneToMany {
+	Ingredient to Recipe{Ingredient},
+    Ingredient to ShoppingList{Ingredient}
+}
+
+
+// Set pagination options
+paginate Recipe, Ingredient, ShoppingList with infinite-scroll
+
