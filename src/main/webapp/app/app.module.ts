@@ -37,7 +37,7 @@ import { ErrorComponent } from './layouts/error/error.component';
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
     HttpClientModule,
     NgxWebstorageModule.forRoot({ prefix: 'jhi', separator: '-', caseSensitive: true }),
-    TranslationModule,
+    TranslationModule
   ],
   providers: [
     Title,
