@@ -1,6 +1,7 @@
-<div class="row">
 
-      <div *ngIf="recipe.title !== ''; else infoText">
+      <h2 data-cy="recipeDetailsHeading"><span jhiTranslate="recipebookApp.recipe.detail.title">Recipe</span></h2>
+
+      <div *ngIf="recipe">
   
         <dl>
           <dt><span jhiTranslate="recipebookApp.recipe.title">Title</span></dt>
@@ -13,7 +14,11 @@
           </dd>
           <dt><span jhiTranslate="recipebookApp.recipe.imagePath">Image Path</span></dt>
           <dd>
-            <span>{{ recipe.imagePath }}</span>
+            <img 
+            src="{{recipe.imagePath}}" 
+            alt="{{recipe.title}}" 
+            class="img-responsive" 
+            style="max-height: 50px;"/>
           </dd>
           <dt><span jhiTranslate="recipebookApp.recipe.user">User</span></dt>
           <dd>
@@ -26,11 +31,20 @@
             </div>-->
           </dd>
         </dl>
+      
+        <span>
+            <button
+            id="jh-create-entity"
+            data-cy="entityCreateButton"
+            class="btn btn-primary jh-create-entity create-shopping-list"
+            [routerLink]="['/shopping-list/new']"
+            >
+            <fa-icon icon="plus"></fa-icon>
+            <span> Add ingredients to my shopping list </span>
+          </button>
+      </span>
+
 
       </div>
-      <ng-template #infoText>
-        <p>Please select a recipe</p>
-    </ng-template>
 
-  </div>
   

@@ -14,6 +14,7 @@ export class HomeRecipeItemComponent {
   constructor(private homeService: HomeService){}
 
   onSelectRecipeItem(): void {
+    this.recipe.isSelected = !this.recipe.isSelected;
     this.homeService.recipeSelected.emit(this.recipe);
   }
 }

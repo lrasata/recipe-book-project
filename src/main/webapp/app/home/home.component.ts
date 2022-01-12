@@ -47,6 +47,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe(
         (recipe: Recipe) => {
           this.recipeDetailToDisplay = recipe;
+          for (const item of this.recipes) {
+            if (recipe.id === item.id ) {
+              item.isSelected = recipe.isSelected;
+            } else {
+              item.isSelected = false;
+            }
+          }
         }
       );
   }

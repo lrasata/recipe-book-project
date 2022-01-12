@@ -1,5 +1,5 @@
 <a (click)="onSelectRecipeItem()">
-    <span class="list-group-item clearfix ">
+    <span [ngClass]="recipe.isSelected ? 'list-group-item clearfix background-grey': 'list-group-item clearfix'">
         <div class="row">
             <div class="col-md-6">
                 <h4 class="list-group-item-heading">{{recipe.title}}</h4>
