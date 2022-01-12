@@ -32,9 +32,10 @@
         </dd>
         <dt><span jhiTranslate="recipebookApp.recipe.ingredient">Ingredient</span></dt>
         <dd>
-          <div *ngIf="recipe.ingredient">
-            <a [routerLink]="['/ingredient', recipe.ingredient?.id, 'view']">{{ recipe.ingredient?.id }}</a>
-          </div>
+          <span *ngFor="let ingredient of recipe.ingredients; let last = last">
+            <a [routerLink]="['/ingredient', ingredient?.id, 'view']">{{ ingredient.id }}</a
+            >{{ last ? '' : ', ' }}
+          </span>
         </dd>
       </dl>
 

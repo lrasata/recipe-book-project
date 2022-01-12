@@ -3,6 +3,8 @@ package com.project.recipebook.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 
 /**
@@ -34,9 +36,14 @@ public class Recipe implements Serializable {
     @JoinColumn(unique = true)
     private User user;
 
-    @ManyToOne
+    @ManyToMany
+    @JoinTable(
+        name = "rel_recipe__ingredient",
+        joinColumns = @JoinColumn(name = "recipe_id"),
+        inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+    )
     @JsonIgnoreProperties(value = { "recipes", "shoppingLists" }, allowSetters = true)
-    private Ingredient ingredient;
+    private Set<Ingredient> ingredients = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -105,16 +112,28 @@ public class Recipe implements Serializable {
         return this;
     }
 
-    public Ingredient getIngredient() {
-        return this.ingredient;
+    public Set<Ingredient> getIngredients() {
+        return this.ingredients;
     }
 
-    public void setIngredient(Ingredient ingredient) {
-        this.ingredient = ingredient;
+    public void setIngredients(Set<Ingredient> ingredients) {
+        this.ingredients = ingredients;
     }
 
-    public Recipe ingredient(Ingredient ingredient) {
-        this.setIngredient(ingredient);
+    public Recipe ingredients(Set<Ingredient> ingredients) {
+        this.setIngredients(ingredients);
+        return this;
+    }
+
+    public Recipe addIngredient(Ingredient ingredient) {
+        this.ingredients.add(ingredient);
+        ingredient.getRecipes().add(this);
+        return this;
+    }
+
+    public Recipe removeIngredient(Ingredient ingredient) {
+        this.ingredients.remove(ingredient);
+        ingredient.getRecipes().remove(this);
         return this;
     }
 

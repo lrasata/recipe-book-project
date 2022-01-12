@@ -25,7 +25,7 @@ export class ShoppingListUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     user: [],
-    ingredient: [],
+    ingredients: [],
   });
 
   constructor(
@@ -66,6 +66,17 @@ export class ShoppingListUpdateComponent implements OnInit {
     return item.id!;
   }
 
+  getSelectedIngredient(option: IIngredient, selectedVals?: IIngredient[]): IIngredient {
+    if (selectedVals) {
+      for (const selectedVal of selectedVals) {
+        if (option.id === selectedVal.id) {
+          return selectedVal;
+        }
+      }
+    }
+    return option;
+  }
+
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IShoppingList>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
       next: () => this.onSaveSuccess(),
@@ -89,13 +100,13 @@ export class ShoppingListUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: shoppingList.id,
       user: shoppingList.user,
-      ingredient: shoppingList.ingredient,
+      ingredients: shoppingList.ingredients,
     });
 
     this.usersSharedCollection = this.userService.addUserToCollectionIfMissing(this.usersSharedCollection, shoppingList.user);
     this.ingredientsSharedCollection = this.ingredientService.addIngredientToCollectionIfMissing(
       this.ingredientsSharedCollection,
-      shoppingList.ingredient
+      ...(shoppingList.ingredients ?? [])
     );
   }
 
@@ -111,7 +122,7 @@ export class ShoppingListUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<IIngredient[]>) => res.body ?? []))
       .pipe(
         map((ingredients: IIngredient[]) =>
-          this.ingredientService.addIngredientToCollectionIfMissing(ingredients, this.editForm.get('ingredient')!.value)
+          this.ingredientService.addIngredientToCollectionIfMissing(ingredients, ...(this.editForm.get('ingredients')!.value ?? []))
         )
       )
       .subscribe((ingredients: IIngredient[]) => (this.ingredientsSharedCollection = ingredients));
@@ -122,7 +133,7 @@ export class ShoppingListUpdateComponent implements OnInit {
       ...new ShoppingList(),
       id: this.editForm.get(['id'])!.value,
       user: this.editForm.get(['user'])!.value,
-      ingredient: this.editForm.get(['ingredient'])!.value,
+      ingredients: this.editForm.get(['ingredients'])!.value,
     };
   }
 }

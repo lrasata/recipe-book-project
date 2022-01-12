@@ -22,26 +22,29 @@
           </dd>
           <dt><span jhiTranslate="recipebookApp.recipe.user">User</span></dt>
           <dd>
-            <span>{{ recipe.user?.id }}</span>
+            <span>{{ recipe.user?.login }}</span>
           </dd>
           <dt><span jhiTranslate="recipebookApp.recipe.ingredient">Ingredient</span></dt>
           <dd>
-            <!--<div *ngIf="recipe.ingredient">
-              <a [routerLink]="['/ingredient', recipe.ingredient?.id, 'view']">{{ recipe.ingredient?.id }}</a>
-            </div>-->
+            <span *ngFor="let ingredient of recipe.ingredients; let last = last">
+              <span>{{ ingredient.name }}</span>{{ last ? '' : ', ' }}
+              <!--TODO display all ingredients cf backend : update api/recipes to get ingredients-->
+            </span>
           </dd>
         </dl>
       
         <span>
             <button
-            id="jh-create-entity"
-            data-cy="entityCreateButton"
-            class="btn btn-primary jh-create-entity create-shopping-list"
-            [routerLink]="['/shopping-list/new']"
-            >
-            <fa-icon icon="plus"></fa-icon>
-            <span> Add ingredients to my shopping list </span>
-          </button>
+              id="jh-create-entity"
+              data-cy="entityCreateButton"
+              class="btn btn-primary jh-create-entity create-shopping-list"
+              (click)="addIngredientToShoppingList()"
+              >
+              <fa-icon icon="plus"></fa-icon>
+              <span> Add ingredients to my shopping list </span>
+              <!--TODO create shopping list-->
+            </button>
+            <jhi-alert></jhi-alert>
       </span>
 
 

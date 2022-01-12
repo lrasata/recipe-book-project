@@ -12,16 +12,18 @@
   ],
   "relationships": [
     {
-      "relationshipType": "one-to-many",
+      "relationshipType": "many-to-many",
       "otherEntityName": "recipe",
       "otherEntityRelationshipName": "ingredient",
-      "relationshipName": "recipe"
+      "relationshipName": "recipe",
+      "ownerSide": false
     },
     {
-      "relationshipType": "one-to-many",
+      "relationshipType": "many-to-many",
       "otherEntityName": "shoppingList",
       "otherEntityRelationshipName": "ingredient",
-      "relationshipName": "shoppingList"
+      "relationshipName": "shoppingList",
+      "ownerSide": false
     }
   ],
   "javadoc": "Ingredient Entity",

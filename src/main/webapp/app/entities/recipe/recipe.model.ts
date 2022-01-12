@@ -7,7 +7,7 @@ export interface IRecipe {
   description?: string | null;
   imagePath?: string | null;
   user?: IUser | null;
-  ingredient?: IIngredient | null;
+  ingredients?: IIngredient[] | null;
   isSelected?: boolean;
 }
 
@@ -18,7 +18,7 @@ export class Recipe implements IRecipe {
     public description?: string | null,
     public imagePath?: string | null,
     public user?: IUser | null,
-    public ingredient?: IIngredient | null,
+    public ingredients?: IIngredient[] | null,
     public isSelected?: boolean
   ) {
     this.isSelected = false;

@@ -28,10 +28,9 @@ relationship OneToOne {
     ShoppingList{user} to User
 }
 
-
-relationship OneToMany {
-	Ingredient to Recipe{Ingredient},
-    Ingredient to ShoppingList{Ingredient}
+relationship ManyToMany {
+	Recipe{ingredient} to Ingredient{recipe},
+    ShoppingList{ingredient} to Ingredient{shoppingList}
 }
 
 

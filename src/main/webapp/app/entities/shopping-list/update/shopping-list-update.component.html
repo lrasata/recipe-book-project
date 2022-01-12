@@ -31,13 +31,17 @@
         </div>
 
         <div class="form-group">
-          <label class="form-control-label" jhiTranslate="recipebookApp.shoppingList.ingredient" for="field_ingredient">Ingredient</label>
-          <select class="form-control" id="field_ingredient" data-cy="ingredient" name="ingredient" formControlName="ingredient">
-            <option [ngValue]="null"></option>
+          <label jhiTranslate="recipebookApp.shoppingList.ingredient" for="field_ingredients">Ingredient</label>
+          <select
+            class="form-control"
+            id="field_ingredients"
+            data-cy="ingredient"
+            multiple
+            name="ingredients"
+            formControlName="ingredients"
+          >
             <option
-              [ngValue]="
-                ingredientOption.id === editForm.get('ingredient')!.value?.id ? editForm.get('ingredient')!.value : ingredientOption
-              "
+              [ngValue]="getSelectedIngredient(ingredientOption, editForm.get('ingredients')!.value)"
               *ngFor="let ingredientOption of ingredientsSharedCollection; trackBy: trackIngredientById"
             >
               {{ ingredientOption.id }}

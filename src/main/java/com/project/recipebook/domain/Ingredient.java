@@ -29,12 +29,12 @@ public class Ingredient implements Serializable {
     @Column(name = "amount")
     private Long amount;
 
-    @OneToMany(mappedBy = "ingredient")
-    @JsonIgnoreProperties(value = { "user", "ingredient" }, allowSetters = true)
+    @ManyToMany(mappedBy = "ingredients")
+    @JsonIgnoreProperties(value = { "user", "ingredients" }, allowSetters = true)
     private Set<Recipe> recipes = new HashSet<>();
 
-    @OneToMany(mappedBy = "ingredient")
-    @JsonIgnoreProperties(value = { "user", "ingredient" }, allowSetters = true)
+    @ManyToMany(mappedBy = "ingredients")
+    @JsonIgnoreProperties(value = { "user", "ingredients" }, allowSetters = true)
     private Set<ShoppingList> shoppingLists = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -84,10 +84,10 @@ public class Ingredient implements Serializable {
 
     public void setRecipes(Set<Recipe> recipes) {
         if (this.recipes != null) {
-            this.recipes.forEach(i -> i.setIngredient(null));
+            this.recipes.forEach(i -> i.removeIngredient(this));
         }
         if (recipes != null) {
-            recipes.forEach(i -> i.setIngredient(this));
+            recipes.forEach(i -> i.addIngredient(this));
         }
         this.recipes = recipes;
     }
@@ -99,13 +99,13 @@ public class Ingredient implements Serializable {
 
     public Ingredient addRecipe(Recipe recipe) {
         this.recipes.add(recipe);
-        recipe.setIngredient(this);
+        recipe.getIngredients().add(this);
         return this;
     }
 
     public Ingredient removeRecipe(Recipe recipe) {
         this.recipes.remove(recipe);
-        recipe.setIngredient(null);
+        recipe.getIngredients().remove(this);
         return this;
     }
 
@@ -115,10 +115,10 @@ public class Ingredient implements Serializable {
 
     public void setShoppingLists(Set<ShoppingList> shoppingLists) {
         if (this.shoppingLists != null) {
-            this.shoppingLists.forEach(i -> i.setIngredient(null));
+            this.shoppingLists.forEach(i -> i.removeIngredient(this));
         }
         if (shoppingLists != null) {
-            shoppingLists.forEach(i -> i.setIngredient(this));
+            shoppingLists.forEach(i -> i.addIngredient(this));
         }
         this.shoppingLists = shoppingLists;
     }
@@ -130,13 +130,13 @@ public class Ingredient implements Serializable {
 
     public Ingredient addShoppingList(ShoppingList shoppingList) {
         this.shoppingLists.add(shoppingList);
-        shoppingList.setIngredient(this);
+        shoppingList.getIngredients().add(this);
         return this;
     }
 
     public Ingredient removeShoppingList(ShoppingList shoppingList) {
         this.shoppingLists.remove(shoppingList);
-        shoppingList.setIngredient(null);
+        shoppingList.getIngredients().remove(this);
         return this;
     }
 

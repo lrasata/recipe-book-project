@@ -72,12 +72,12 @@ describe('Recipe Management Update Component', () => {
 
     it('Should call Ingredient query and add missing value', () => {
       const recipe: IRecipe = { id: 456 };
-      const ingredient: IIngredient = { id: 10338 };
-      recipe.ingredient = ingredient;
+      const ingredients: IIngredient[] = [{ id: 10338 }];
+      recipe.ingredients = ingredients;
 
       const ingredientCollection: IIngredient[] = [{ id: 95004 }];
       jest.spyOn(ingredientService, 'query').mockReturnValue(of(new HttpResponse({ body: ingredientCollection })));
-      const additionalIngredients = [ingredient];
+      const additionalIngredients = [...ingredients];
       const expectedCollection: IIngredient[] = [...additionalIngredients, ...ingredientCollection];
       jest.spyOn(ingredientService, 'addIngredientToCollectionIfMissing').mockReturnValue(expectedCollection);
 
@@ -93,15 +93,15 @@ describe('Recipe Management Update Component', () => {
       const recipe: IRecipe = { id: 456 };
       const user: IUser = { id: 83719 };
       recipe.user = user;
-      const ingredient: IIngredient = { id: 10221 };
-      recipe.ingredient = ingredient;
+      const ingredients: IIngredient = { id: 10221 };
+      recipe.ingredients = [ingredients];
 
       activatedRoute.data = of({ recipe });
       comp.ngOnInit();
 
       expect(comp.editForm.value).toEqual(expect.objectContaining(recipe));
       expect(comp.usersSharedCollection).toContain(user);
-      expect(comp.ingredientsSharedCollection).toContain(ingredient);
+      expect(comp.ingredientsSharedCollection).toContain(ingredients);
     });
   });
 
@@ -183,6 +183,34 @@ describe('Recipe Management Update Component', () => {
         const entity = { id: 123 };
         const trackResult = comp.trackIngredientById(0, entity);
         expect(trackResult).toEqual(entity.id);
+      });
+    });
+  });
+
+  describe('Getting selected relationships', () => {
+    describe('getSelectedIngredient', () => {
+      it('Should return option if no Ingredient is selected', () => {
+        const option = { id: 123 };
+        const result = comp.getSelectedIngredient(option);
+        expect(result === option).toEqual(true);
+      });
+
+      it('Should return selected Ingredient for according option', () => {
+        const option = { id: 123 };
+        const selected = { id: 123 };
+        const selected2 = { id: 456 };
+        const result = comp.getSelectedIngredient(option, [selected2, selected]);
+        expect(result === selected).toEqual(true);
+        expect(result === selected2).toEqual(false);
+        expect(result === option).toEqual(false);
+      });
+
+      it('Should return option if this Ingredient is not selected', () => {
+        const option = { id: 123 };
+        const selected = { id: 456 };
+        const result = comp.getSelectedIngredient(option, [selected]);
+        expect(result === option).toEqual(true);
+        expect(result === selected).toEqual(false);
       });
     });
   });

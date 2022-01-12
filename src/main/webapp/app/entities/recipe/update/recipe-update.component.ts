@@ -28,7 +28,7 @@ export class RecipeUpdateComponent implements OnInit {
     description: [],
     imagePath: [],
     user: [],
-    ingredient: [],
+    ingredients: [],
   });
 
   constructor(
@@ -69,6 +69,17 @@ export class RecipeUpdateComponent implements OnInit {
     return item.id!;
   }
 
+  getSelectedIngredient(option: IIngredient, selectedVals?: IIngredient[]): IIngredient {
+    if (selectedVals) {
+      for (const selectedVal of selectedVals) {
+        if (option.id === selectedVal.id) {
+          return selectedVal;
+        }
+      }
+    }
+    return option;
+  }
+
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IRecipe>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
       next: () => this.onSaveSuccess(),
@@ -95,13 +106,13 @@ export class RecipeUpdateComponent implements OnInit {
       description: recipe.description,
       imagePath: recipe.imagePath,
       user: recipe.user,
-      ingredient: recipe.ingredient,
+      ingredients: recipe.ingredients,
     });
 
     this.usersSharedCollection = this.userService.addUserToCollectionIfMissing(this.usersSharedCollection, recipe.user);
     this.ingredientsSharedCollection = this.ingredientService.addIngredientToCollectionIfMissing(
       this.ingredientsSharedCollection,
-      recipe.ingredient
+      ...(recipe.ingredients ?? [])
     );
   }
 
@@ -117,7 +128,7 @@ export class RecipeUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<IIngredient[]>) => res.body ?? []))
       .pipe(
         map((ingredients: IIngredient[]) =>
-          this.ingredientService.addIngredientToCollectionIfMissing(ingredients, this.editForm.get('ingredient')!.value)
+          this.ingredientService.addIngredientToCollectionIfMissing(ingredients, ...(this.editForm.get('ingredients')!.value ?? []))
         )
       )
       .subscribe((ingredients: IIngredient[]) => (this.ingredientsSharedCollection = ingredients));
@@ -131,7 +142,7 @@ export class RecipeUpdateComponent implements OnInit {
       description: this.editForm.get(['description'])!.value,
       imagePath: this.editForm.get(['imagePath'])!.value,
       user: this.editForm.get(['user'])!.value,
-      ingredient: this.editForm.get(['ingredient'])!.value,
+      ingredients: this.editForm.get(['ingredients'])!.value,
     };
   }
 }

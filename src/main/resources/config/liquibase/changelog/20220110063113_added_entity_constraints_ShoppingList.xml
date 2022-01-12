@@ -14,9 +14,15 @@
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
 
+        <addForeignKeyConstraint baseColumnNames="shopping_list_id"
+                                 baseTableName="rel_shopping_list__ingredient"
+                                 constraintName="fk_rel_shopping_list__ingredient__shopping_list_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="shopping_list"/>
+
         <addForeignKeyConstraint baseColumnNames="ingredient_id"
-                                 baseTableName="shopping_list"
-                                 constraintName="fk_shopping_list__ingredient_id"
+                                 baseTableName="rel_shopping_list__ingredient"
+                                 constraintName="fk_rel_shopping_list__ingredient__ingredient_id"
                                  referencedColumnNames="id"
                                  referencedTableName="ingredient"/>
     </changeSet>

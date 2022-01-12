@@ -14,9 +14,15 @@
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
 
+        <addForeignKeyConstraint baseColumnNames="recipe_id"
+                                 baseTableName="rel_recipe__ingredient"
+                                 constraintName="fk_rel_recipe__ingredient__recipe_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="recipe"/>
+
         <addForeignKeyConstraint baseColumnNames="ingredient_id"
-                                 baseTableName="recipe"
-                                 constraintName="fk_recipe__ingredient_id"
+                                 baseTableName="rel_recipe__ingredient"
+                                 constraintName="fk_rel_recipe__ingredient__ingredient_id"
                                  referencedColumnNames="id"
                                  referencedTableName="ingredient"/>
     </changeSet>

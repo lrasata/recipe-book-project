@@ -143,12 +143,21 @@ public class ShoppingListResource {
      * {@code GET  /shopping-lists} : get all the shoppingLists.
      *
      * @param pageable the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of shoppingLists in body.
      */
     @GetMapping("/shopping-lists")
-    public ResponseEntity<List<ShoppingList>> getAllShoppingLists(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ShoppingList>> getAllShoppingLists(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+    ) {
         log.debug("REST request to get a page of ShoppingLists");
-        Page<ShoppingList> page = shoppingListRepository.findAll(pageable);
+        Page<ShoppingList> page;
+        if (eagerload) {
+            page = shoppingListRepository.findAllWithEagerRelationships(pageable);
+        } else {
+            page = shoppingListRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -162,7 +171,7 @@ public class ShoppingListResource {
     @GetMapping("/shopping-lists/{id}")
     public ResponseEntity<ShoppingList> getShoppingList(@PathVariable Long id) {
         log.debug("REST request to get ShoppingList : {}", id);
-        Optional<ShoppingList> shoppingList = shoppingListRepository.findById(id);
+        Optional<ShoppingList> shoppingList = shoppingListRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(shoppingList);
     }
 

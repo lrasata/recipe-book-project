@@ -151,12 +151,21 @@ public class RecipeResource {
      * {@code GET  /recipes} : get all the recipes.
      *
      * @param pageable the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of recipes in body.
      */
     @GetMapping("/recipes")
-    public ResponseEntity<List<Recipe>> getAllRecipes(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<Recipe>> getAllRecipes(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+    ) {
         log.debug("REST request to get a page of Recipes");
-        Page<Recipe> page = recipeRepository.findAll(pageable);
+        Page<Recipe> page;
+        if (eagerload) {
+            page = recipeRepository.findAllWithEagerRelationships(pageable);
+        } else {
+            page = recipeRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -170,7 +179,7 @@ public class RecipeResource {
     @GetMapping("/recipes/{id}")
     public ResponseEntity<Recipe> getRecipe(@PathVariable Long id) {
         log.debug("REST request to get Recipe : {}", id);
-        Optional<Recipe> recipe = recipeRepository.findById(id);
+        Optional<Recipe> recipe = recipeRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(recipe);
     }
 

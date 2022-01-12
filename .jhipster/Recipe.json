@@ -23,10 +23,11 @@
       "ownerSide": true
     },
     {
-      "relationshipType": "many-to-one",
+      "relationshipType": "many-to-many",
       "otherEntityName": "ingredient",
       "otherEntityRelationshipName": "recipe",
-      "relationshipName": "ingredient"
+      "relationshipName": "ingredient",
+      "ownerSide": true
     }
   ],
   "javadoc": "Recipe Entity.\\n@author lrasata.",

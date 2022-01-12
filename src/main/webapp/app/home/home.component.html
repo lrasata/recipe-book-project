@@ -27,8 +27,8 @@
               *ngFor="let recipeItem of recipes" 
               [recipe]="recipeItem"></jhi-home-recipe-item>
           </div>
-          <div class="col-md-6 background-grey padding-recipe-details" *ngIf="recipeDetailToDisplay.id != null">
-            <jhi-home-recipe-detail [recipe]="recipeDetailToDisplay"></jhi-home-recipe-detail>
+          <div class="col-md-6 background-grey padding-recipe-details" *ngIf="recipeDetailToDisplay.id != null && account">
+            <jhi-home-recipe-detail [recipe]="recipeDetailToDisplay" [accountLogin]="account.login"></jhi-home-recipe-detail>
           </div>
           <div class="col-md-6 background-grey padding-recipe-details" *ngIf="recipeDetailToDisplay.id == null">
             <p style="text-align: center;">Please select Recipe to display details</p>

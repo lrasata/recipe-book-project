@@ -36,9 +36,6 @@
           <th scope="col" jhiSortBy="user.id">
             <span jhiTranslate="recipebookApp.shoppingList.user">User</span> <fa-icon icon="sort"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="ingredient.id">
-            <span jhiTranslate="recipebookApp.shoppingList.ingredient">Ingredient</span> <fa-icon icon="sort"></fa-icon>
-          </th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -49,11 +46,6 @@
           </td>
           <td>
             {{ shoppingList.user?.id }}
-          </td>
-          <td>
-            <div *ngIf="shoppingList.ingredient">
-              <a [routerLink]="['/ingredient', shoppingList.ingredient?.id, 'view']">{{ shoppingList.ingredient?.id }}</a>
-            </div>
           </td>
           <td class="text-right">
             <div class="btn-group">
