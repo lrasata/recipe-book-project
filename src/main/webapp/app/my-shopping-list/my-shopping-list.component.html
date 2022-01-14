@@ -1,1 +1,53 @@
-              <!--TODO list all shopping-list by current-user-->
+<div>
+    <h2 id="page-heading" data-cy="ShoppingListHeading">
+      <span jhiTranslate="recipebookApp.shoppingList.home.title">Shopping Lists</span>
+    </h2>
+    
+    <jhi-alert></jhi-alert>
+  
+    <div class="alert alert-warning" id="no-result" *ngIf="shoppingLists?.length === 0">
+      <span jhiTranslate="recipebookApp.shoppingList.home.notFound">No shoppingLists found</span>
+    </div>
+  
+    <div class="table-responsive" id="entities" *ngIf="shoppingLists && shoppingLists.length > 0">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr>
+            <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="user.id">
+              <span jhiTranslate="recipebookApp.shoppingList.user">User</span> <fa-icon icon="sort"></fa-icon>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let shoppingList of shoppingLists; trackBy: trackId" data-cy="entityTable">
+            <td>
+              <a [routerLink]="['/shopping-list', shoppingList.id, 'view']">{{ shoppingList.id }}</a>
+            </td>
+            <td>
+                <span *ngFor="let ingredient of shoppingList.ingredients; let last = last">
+                    <span>{{ ingredient.name }}</span>{{ last ? '' : ', ' }}
+                  </span>
+            </td>
+            <td class="text-right">
+              <div class="btn-group">
+                <button
+                  type="submit"
+                  [routerLink]="['/shopping-list', shoppingList.id, 'view']"
+                  class="btn btn-info btn-sm"
+                  data-cy="entityDetailsButton"
+                >
+                  <fa-icon icon="eye"></fa-icon>
+                  <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                </button>
+  
+
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

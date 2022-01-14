@@ -28,7 +28,6 @@
           <dd>
             <span *ngFor="let ingredient of recipe.ingredients; let last = last">
               <span>{{ ingredient.name }}</span>{{ last ? '' : ', ' }}
-              <!--TODO display all ingredients cf backend : update api/recipes to get ingredients-->
             </span>
           </dd>
         </dl>
@@ -42,10 +41,9 @@
               >
               <fa-icon icon="plus"></fa-icon>
               <span> Add ingredients to my shopping list </span>
-              <!--TODO create shopping list-->
             </button>
-            <jhi-alert></jhi-alert>
       </span>
+      <jhi-alert></jhi-alert>
 
 
       </div>
