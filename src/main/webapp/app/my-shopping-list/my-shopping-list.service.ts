@@ -14,7 +14,7 @@ export class MyShoppingListService {
 
     queryByUserLogin(userLogin: string): Observable<EntityArrayResponseType> {
         return this.http.get<IShoppingList[]>(
-            this.resourceUrl + '/user/' + userLogin + 'shopping-lists', 
+            this.resourceUrl + '/user/' + userLogin + '/shopping-lists', 
             { observe: 'response' });
       }
 }

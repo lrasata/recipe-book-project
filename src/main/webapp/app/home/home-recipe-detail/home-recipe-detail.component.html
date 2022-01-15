@@ -38,11 +38,12 @@
               data-cy="entityCreateButton"
               class="btn btn-primary jh-create-entity create-shopping-list"
               (click)="addIngredientToShoppingList()"
+              [disabled]="recipe.ingredients?.length === 0"
               >
               <fa-icon icon="plus"></fa-icon>
               <span> Add ingredients to my shopping list </span>
             </button>
-      </span>
+        </span>
       <jhi-alert></jhi-alert>
 
 

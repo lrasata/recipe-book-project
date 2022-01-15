@@ -13,40 +13,39 @@ import { MyShoppingListService } from "./my-shopping-list.service";
   })
 export class MyShoppingListComponent implements OnInit, OnDestroy {
     shoppingLists: IShoppingList[] =  [];
-    isLoading = false;
     user : User = {};
     account: Account | null = null;
 
     private readonly destroy$ = new Subject<void>();
     
     constructor(protected myShoppingListService: MyShoppingListService,
-        private accountService: AccountService, ){
+        private accountService: AccountService){
         this.shoppingLists = [];
     }
     ngOnInit(): void {
-        this.isLoading = true;
         this.accountService
         .getAuthenticationState()
         .pipe(takeUntil(this.destroy$))
         .subscribe(account => {
-            this.account = account;
-            if (this.account !== null) {
-                this.myShoppingListService
-                .queryByUserLogin(this.account.login)
-                .subscribe({
-                next: (res: HttpResponse<IShoppingList[]>) => {
-                    this.isLoading = false;
-                    this.shoppingLists = res.body ?? [];
-                },
-                error: () => {
-                    this.isLoading = false;
-                },
-                });
+            this.account =  account;
+            if (account !== null) {
+                this.loadShoppingLists(account); 
+            } else {
+                // eslint-disable-next-line no-console
+                console.log("condition non verifie");
             }
-
         });
-
     }
+
+    loadShoppingLists(account: Account): void{
+        
+        this.myShoppingListService
+            .queryByUserLogin(account.login)
+            .subscribe((res: HttpResponse<IShoppingList[]>) => {
+                this.shoppingLists = res.body ?? []
+              });
+    }
+
     trackId(index: number, item: IShoppingList): number {
         return item.id!;
       }
