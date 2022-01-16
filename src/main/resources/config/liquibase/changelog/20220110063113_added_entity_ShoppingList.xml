@@ -17,8 +17,8 @@
             <column name="shopping_status" type="varchar(255)" defaultValue="DRAFT">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="bigint">
-                <constraints nullable="true" unique="false" uniqueConstraintName="ux_shopping_list__user_id" />
+            <column name="user_id" type="bigint" defaultValue="2" >
+                <constraints nullable="false" unique="false" uniqueConstraintName="ux_shopping_list__user_id" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
