@@ -9,11 +9,12 @@ import javax.validation.Valid;
 
 import com.project.recipebook.domain.ShoppingList;
 import com.project.recipebook.domain.enumeration.ShoppingStatus;
-import com.project.recipebook.repository.ShoppingListRepository;
 import com.project.recipebook.repository.recipebook.RcbShoppingListRepository;
 import com.project.recipebook.service.recipebook.RcbShoppingListService;
 import com.project.recipebook.web.rest.errors.BadRequestAlertException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +22,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import tech.jhipster.web.util.HeaderUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * REST controller for managing {@link com.project.recipebook.domain.ShoppingList}.
@@ -68,7 +66,7 @@ public class RcbShoppingListResource {
         }
         ShoppingList result = this.rcbShoppingListService.create(shoppingList);
         return ResponseEntity
-            .created(new URI("/api/shopping-lists/" + result.getId()))
+            .created(new URI("/api/rcb/shopping-lists/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }

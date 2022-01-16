@@ -2,11 +2,12 @@ import { HttpResponse } from "@angular/common/http";
 import { Component, Input, OnInit } from "@angular/core";
 import { UserManagementService } from "app/admin/user-management/service/user-management.service";
 import { User } from "app/admin/user-management/user-management.model";
+import { ShoppingStatus } from "app/entities/enumerations/shopping-status.model";
 import { Recipe } from "app/entities/recipe/recipe.model";
-import { ShoppingListService } from "app/entities/shopping-list/service/shopping-list.service";
 import { IShoppingList, ShoppingList } from "app/entities/shopping-list/shopping-list.model";
 import { Observable } from "rxjs";
 import { finalize } from 'rxjs/operators';
+import { HomeService } from "../home.service";
 
 @Component({
     selector: 'jhi-home-recipe-detail',
@@ -20,7 +21,7 @@ import { finalize } from 'rxjs/operators';
 
     constructor(
       private userManagementService: UserManagementService, 
-      private shoppingListService: ShoppingListService){}
+      private homeService: HomeService){}
     
       ngOnInit(): void {
         this.userManagementService.find(this.accountLogin).subscribe((user) => {
@@ -31,8 +32,9 @@ import { finalize } from 'rxjs/operators';
     addIngredientToShoppingList(): void {
         const shoppingList = new ShoppingList();
         shoppingList.user = new User(this.user.id, this.user.login);
+        shoppingList.shoppingStatus = ShoppingStatus.DRAFT;
         shoppingList.ingredients = this.recipe.ingredients?.slice();
-        this.subscribeToSaveResponse(this.shoppingListService.create(shoppingList));
+        this.subscribeToSaveResponse(this.homeService.addIngredientToMyShoppingList(shoppingList));
     }
 
     protected subscribeToSaveResponse(result: Observable<HttpResponse<IShoppingList>>): void {

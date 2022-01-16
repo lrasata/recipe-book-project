@@ -55,7 +55,8 @@
                   tableName="shopping_list"
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
-            <column name="shopping_status" type="string"/>
+            <column name="user_id" type="numeric" defaultValue="2"/>
+            <column name="shopping_status" type="string" defaultValue="DRAFT"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>
