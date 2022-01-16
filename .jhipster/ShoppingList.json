@@ -1,6 +1,13 @@
 {
   "name": "ShoppingList",
-  "fields": [],
+  "fields": [
+    {
+      "fieldName": "shoppingStatus",
+      "fieldType": "ShoppingStatus",
+      "fieldValues": "DRAFT,ORDERED",
+      "fieldValidateRules": ["required"]
+    }
+  ],
   "relationships": [
     {
       "relationshipType": "one-to-one",

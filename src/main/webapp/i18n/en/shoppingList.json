@@ -18,6 +18,7 @@
         "title": "Shopping List"
       },
       "id": "ID",
+      "shoppingStatus": "Shopping Status",
       "user": "User",
       "ingredient": "Ingredient"
     }

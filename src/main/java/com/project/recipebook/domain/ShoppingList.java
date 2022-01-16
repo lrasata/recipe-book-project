@@ -1,11 +1,13 @@
 package com.project.recipebook.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.project.recipebook.domain.enumeration.ShoppingStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 /**
  * ShoppingList Entity
@@ -22,6 +24,11 @@ public class ShoppingList implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     @Column(name = "id")
     private Long id;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "shopping_status", nullable = false)
+    private ShoppingStatus shoppingStatus;
 
     @OneToOne
     @JoinColumn(unique = true)
@@ -49,6 +56,19 @@ public class ShoppingList implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public ShoppingStatus getShoppingStatus() {
+        return this.shoppingStatus;
+    }
+
+    public ShoppingList shoppingStatus(ShoppingStatus shoppingStatus) {
+        this.setShoppingStatus(shoppingStatus);
+        return this;
+    }
+
+    public void setShoppingStatus(ShoppingStatus shoppingStatus) {
+        this.shoppingStatus = shoppingStatus;
     }
 
     public User getUser() {
@@ -113,6 +133,7 @@ public class ShoppingList implements Serializable {
     public String toString() {
         return "ShoppingList{" +
             "id=" + getId() +
+            ", shoppingStatus='" + getShoppingStatus() + "'" +
             "}";
     }
 }

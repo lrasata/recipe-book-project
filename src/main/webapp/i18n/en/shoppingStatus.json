@@ -1,0 +1,9 @@
+{
+  "recipebookApp": {
+    "ShoppingStatus": {
+      "null": "",
+      "DRAFT": "DRAFT",
+      "ORDERED": "ORDERED"
+    }
+  }
+}

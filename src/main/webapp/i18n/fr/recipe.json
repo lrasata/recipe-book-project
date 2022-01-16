@@ -2,9 +2,9 @@
   "recipebookApp": {
     "recipe": {
       "home": {
-        "title": "Recettes",
+        "title": "Recipes",
         "refreshListLabel": "Actualiser la liste",
-        "createLabel": "Créer une nouvelle recette",
+        "createLabel": "Créer un nouveau Recipe",
         "createOrEditLabel": "Créer ou éditer un Recipe",
         "notFound": "Aucun Recipe trouvé"
       },
@@ -15,13 +15,13 @@
         "question": "Etes-vous certain de vouloir supprimer le Recipe {{ id }} ?"
       },
       "detail": {
-        "title": "Détails de la recette"
+        "title": "Recipe"
       },
       "id": "ID",
-      "title": "Titre",
+      "title": "Title",
       "description": "Description",
       "imagePath": "Image Path",
-      "user": "Créateur",
+      "user": "User",
       "ingredient": "Ingredient"
     }
   }

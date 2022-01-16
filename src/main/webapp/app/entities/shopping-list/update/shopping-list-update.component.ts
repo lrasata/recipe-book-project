@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
 import { IIngredient } from 'app/entities/ingredient/ingredient.model';
 import { IngredientService } from 'app/entities/ingredient/service/ingredient.service';
+import { ShoppingStatus } from 'app/entities/enumerations/shopping-status.model';
 
 @Component({
   selector: 'jhi-shopping-list-update',
@@ -18,12 +19,14 @@ import { IngredientService } from 'app/entities/ingredient/service/ingredient.se
 })
 export class ShoppingListUpdateComponent implements OnInit {
   isSaving = false;
+  shoppingStatusValues = Object.keys(ShoppingStatus);
 
   usersSharedCollection: IUser[] = [];
   ingredientsSharedCollection: IIngredient[] = [];
 
   editForm = this.fb.group({
     id: [],
+    shoppingStatus: [null, [Validators.required]],
     user: [],
     ingredients: [],
   });
@@ -99,6 +102,7 @@ export class ShoppingListUpdateComponent implements OnInit {
   protected updateForm(shoppingList: IShoppingList): void {
     this.editForm.patchValue({
       id: shoppingList.id,
+      shoppingStatus: shoppingList.shoppingStatus,
       user: shoppingList.user,
       ingredients: shoppingList.ingredients,
     });
@@ -132,6 +136,7 @@ export class ShoppingListUpdateComponent implements OnInit {
     return {
       ...new ShoppingList(),
       id: this.editForm.get(['id'])!.value,
+      shoppingStatus: this.editForm.get(['shoppingStatus'])!.value,
       user: this.editForm.get(['user'])!.value,
       ingredients: this.editForm.get(['ingredients'])!.value,
     };

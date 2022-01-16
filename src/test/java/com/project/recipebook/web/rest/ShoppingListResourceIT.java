@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.project.recipebook.IntegrationTest;
 import com.project.recipebook.domain.ShoppingList;
+import com.project.recipebook.domain.enumeration.ShoppingStatus;
 import com.project.recipebook.repository.ShoppingListRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,9 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class ShoppingListResourceIT {
 
+    private static final ShoppingStatus DEFAULT_SHOPPING_STATUS = ShoppingStatus.DRAFT;
+    private static final ShoppingStatus UPDATED_SHOPPING_STATUS = ShoppingStatus.ORDERED;
+
     private static final String ENTITY_API_URL = "/api/shopping-lists";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -64,7 +68,7 @@ class ShoppingListResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ShoppingList createEntity(EntityManager em) {
-        ShoppingList shoppingList = new ShoppingList();
+        ShoppingList shoppingList = new ShoppingList().shoppingStatus(DEFAULT_SHOPPING_STATUS);
         return shoppingList;
     }
 
@@ -75,7 +79,7 @@ class ShoppingListResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ShoppingList createUpdatedEntity(EntityManager em) {
-        ShoppingList shoppingList = new ShoppingList();
+        ShoppingList shoppingList = new ShoppingList().shoppingStatus(UPDATED_SHOPPING_STATUS);
         return shoppingList;
     }
 
@@ -97,6 +101,7 @@ class ShoppingListResourceIT {
         List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
         assertThat(shoppingListList).hasSize(databaseSizeBeforeCreate + 1);
         ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(DEFAULT_SHOPPING_STATUS);
     }
 
     @Test
@@ -119,6 +124,23 @@ class ShoppingListResourceIT {
 
     @Test
     @Transactional
+    void checkShoppingStatusIsRequired() throws Exception {
+        int databaseSizeBeforeTest = shoppingListRepository.findAll().size();
+        // set the field null
+        shoppingList.setShoppingStatus(null);
+
+        // Create the ShoppingList, which fails.
+
+        restShoppingListMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(shoppingList)))
+            .andExpect(status().isBadRequest());
+
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllShoppingLists() throws Exception {
         // Initialize the database
         shoppingListRepository.saveAndFlush(shoppingList);
@@ -128,7 +150,8 @@ class ShoppingListResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(shoppingList.getId().intValue())));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(shoppingList.getId().intValue())))
+            .andExpect(jsonPath("$.[*].shoppingStatus").value(hasItem(DEFAULT_SHOPPING_STATUS.toString())));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -160,7 +183,8 @@ class ShoppingListResourceIT {
             .perform(get(ENTITY_API_URL_ID, shoppingList.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(shoppingList.getId().intValue()));
+            .andExpect(jsonPath("$.id").value(shoppingList.getId().intValue()))
+            .andExpect(jsonPath("$.shoppingStatus").value(DEFAULT_SHOPPING_STATUS.toString()));
     }
 
     @Test
@@ -182,6 +206,7 @@ class ShoppingListResourceIT {
         ShoppingList updatedShoppingList = shoppingListRepository.findById(shoppingList.getId()).get();
         // Disconnect from session so that the updates on updatedShoppingList are not directly saved in db
         em.detach(updatedShoppingList);
+        updatedShoppingList.shoppingStatus(UPDATED_SHOPPING_STATUS);
 
         restShoppingListMockMvc
             .perform(
@@ -195,6 +220,7 @@ class ShoppingListResourceIT {
         List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
         assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
         ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(UPDATED_SHOPPING_STATUS);
     }
 
     @Test
@@ -265,6 +291,8 @@ class ShoppingListResourceIT {
         ShoppingList partialUpdatedShoppingList = new ShoppingList();
         partialUpdatedShoppingList.setId(shoppingList.getId());
 
+        partialUpdatedShoppingList.shoppingStatus(UPDATED_SHOPPING_STATUS);
+
         restShoppingListMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedShoppingList.getId())
@@ -277,6 +305,7 @@ class ShoppingListResourceIT {
         List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
         assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
         ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(UPDATED_SHOPPING_STATUS);
     }
 
     @Test
@@ -291,6 +320,8 @@ class ShoppingListResourceIT {
         ShoppingList partialUpdatedShoppingList = new ShoppingList();
         partialUpdatedShoppingList.setId(shoppingList.getId());
 
+        partialUpdatedShoppingList.shoppingStatus(UPDATED_SHOPPING_STATUS);
+
         restShoppingListMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedShoppingList.getId())
@@ -303,6 +334,7 @@ class ShoppingListResourceIT {
         List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
         assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
         ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(UPDATED_SHOPPING_STATUS);
     }
 
     @Test

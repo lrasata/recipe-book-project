@@ -8,13 +8,14 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class ShoppingListResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/shopping-lists")
-    public ResponseEntity<ShoppingList> createShoppingList(@RequestBody ShoppingList shoppingList) throws URISyntaxException {
+    public ResponseEntity<ShoppingList> createShoppingList(@Valid @RequestBody ShoppingList shoppingList) throws URISyntaxException {
         log.debug("REST request to save ShoppingList : {}", shoppingList);
         if (shoppingList.getId() != null) {
             throw new BadRequestAlertException("A new shoppingList cannot already have an ID", ENTITY_NAME, "idexists");
@@ -77,7 +78,7 @@ public class ShoppingListResource {
     @PutMapping("/shopping-lists/{id}")
     public ResponseEntity<ShoppingList> updateShoppingList(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody ShoppingList shoppingList
+        @Valid @RequestBody ShoppingList shoppingList
     ) throws URISyntaxException {
         log.debug("REST request to update ShoppingList : {}, {}", id, shoppingList);
         if (shoppingList.getId() == null) {
@@ -112,7 +113,7 @@ public class ShoppingListResource {
     @PatchMapping(value = "/shopping-lists/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ShoppingList> partialUpdateShoppingList(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody ShoppingList shoppingList
+        @NotNull @RequestBody ShoppingList shoppingList
     ) throws URISyntaxException {
         log.debug("REST request to partial update ShoppingList partially : {}, {}", id, shoppingList);
         if (shoppingList.getId() == null) {
@@ -129,6 +130,10 @@ public class ShoppingListResource {
         Optional<ShoppingList> result = shoppingListRepository
             .findById(shoppingList.getId())
             .map(existingShoppingList -> {
+                if (shoppingList.getShoppingStatus() != null) {
+                    existingShoppingList.setShoppingStatus(shoppingList.getShoppingStatus());
+                }
+
                 return existingShoppingList;
             })
             .map(shoppingListRepository::save);

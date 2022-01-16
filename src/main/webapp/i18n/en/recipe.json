@@ -15,13 +15,13 @@
         "question": "Are you sure you want to delete Recipe {{ id }}?"
       },
       "detail": {
-        "title": "Recipe details"
+        "title": "Recipe"
       },
       "id": "ID",
       "title": "Title",
       "description": "Description",
       "imagePath": "Image Path",
-      "user": "Creator",
+      "user": "User",
       "ingredient": "Ingredient"
     }
   }

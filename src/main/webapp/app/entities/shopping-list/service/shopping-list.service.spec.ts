@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
+import { ShoppingStatus } from 'app/entities/enumerations/shopping-status.model';
 import { IShoppingList, ShoppingList } from '../shopping-list.model';
 
 import { ShoppingListService } from './shopping-list.service';
@@ -21,6 +22,7 @@ describe('ShoppingList Service', () => {
 
     elemDefault = {
       id: 0,
+      shoppingStatus: ShoppingStatus.DRAFT,
     };
   });
 
@@ -56,6 +58,7 @@ describe('ShoppingList Service', () => {
       const returnedFromService = Object.assign(
         {
           id: 1,
+          shoppingStatus: 'BBBBBB',
         },
         elemDefault
       );
@@ -87,6 +90,7 @@ describe('ShoppingList Service', () => {
       const returnedFromService = Object.assign(
         {
           id: 1,
+          shoppingStatus: 'BBBBBB',
         },
         elemDefault
       );
@@ -138,7 +142,7 @@ describe('ShoppingList Service', () => {
       });
 
       it('should add only unique ShoppingList to an array', () => {
-        const shoppingListArray: IShoppingList[] = [{ id: 123 }, { id: 456 }, { id: 20043 }];
+        const shoppingListArray: IShoppingList[] = [{ id: 123 }, { id: 456 }, { id: 6240 }];
         const shoppingListCollection: IShoppingList[] = [{ id: 123 }];
         expectedResult = service.addShoppingListToCollectionIfMissing(shoppingListCollection, ...shoppingListArray);
         expect(expectedResult).toHaveLength(3);

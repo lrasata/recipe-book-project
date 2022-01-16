@@ -33,6 +33,9 @@
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="reset()">
           <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="shoppingStatus">
+            <span jhiTranslate="recipebookApp.shoppingList.shoppingStatus">Shopping Status</span> <fa-icon icon="sort"></fa-icon>
+          </th>
           <th scope="col" jhiSortBy="user.id">
             <span jhiTranslate="recipebookApp.shoppingList.user">User</span> <fa-icon icon="sort"></fa-icon>
           </th>
@@ -44,6 +47,7 @@
           <td>
             <a [routerLink]="['/shopping-list', shoppingList.id, 'view']">{{ shoppingList.id }}</a>
           </td>
+          <td jhiTranslate="{{ 'recipebookApp.ShoppingStatus.' + shoppingList.shoppingStatus }}">{{ shoppingList.shoppingStatus }}</td>
           <td>
             {{ shoppingList.user?.id }}
           </td>

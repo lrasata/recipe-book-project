@@ -20,8 +20,12 @@ entity Ingredient {
  * ShoppingList Entity 
  */
 entity ShoppingList {
+	shoppingStatus ShoppingStatus required
 }
 
+enum ShoppingStatus {
+    DRAFT, ORDERED
+}
 
 relationship OneToOne {
 	Recipe{user} to User,
