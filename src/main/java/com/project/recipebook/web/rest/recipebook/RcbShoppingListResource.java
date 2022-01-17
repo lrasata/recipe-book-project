@@ -2,6 +2,7 @@ package com.project.recipebook.web.rest.recipebook;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -159,7 +160,7 @@ public class RcbShoppingListResource {
         return ResponseEntity.ok().body(shoppingLists);
     }
 
-        /**
+    /**
      * {@code GET  /user/{userLogin}/shopping-lists} : get all the shopping-lists by userLogin.
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of shopping-lists in body.
@@ -170,6 +171,33 @@ public class RcbShoppingListResource {
         List<ShoppingList> shoppingLists= this.shoppingListRepository.findAllWithEagerRelationshipsByUserLogin(userLogin);
 
         return ResponseEntity.ok().body(shoppingLists);
+    }
+
+        /**
+     * {@code GET  /user/{userLogin}/shopping-lists} : get all the shopping-lists by userLogin.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of shopping-lists in body.
+     */
+    @GetMapping("/user/{userLogin}/shopping-lists/{status}")
+    public ResponseEntity<List<ShoppingList>> getAllShoppingListByStatusByUserLogin(
+        @PathVariable("userLogin") String userLogin,
+        @PathVariable("status") ShoppingStatus status) {
+        log.debug("REST request to get a list of Shopping List by UserLogin by status : "+ status.name());
+        
+        List<ShoppingList> shoppingLists = new ArrayList<ShoppingList>();
+        switch(status.name()) {
+            case "DRAFT":
+                shoppingLists= this.shoppingListRepository.findAllDraftWithEagerRelationshipsUserLogin(userLogin);
+                return ResponseEntity.ok().body(shoppingLists);
+            case "ORDERED":
+                shoppingLists= this.shoppingListRepository.findAllOrderedtWithEagerRelationshipsUserLogin(userLogin);
+                return ResponseEntity.ok().body(shoppingLists);
+            default:
+            return ResponseEntity.ok().body(shoppingLists);
+
+        }
+
+        
     }
     
 }

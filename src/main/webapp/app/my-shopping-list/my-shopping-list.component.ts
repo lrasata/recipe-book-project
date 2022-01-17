@@ -3,24 +3,29 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { User } from "app/admin/user-management/user-management.model";
 import { Account } from "app/core/auth/account.model";
 import { AccountService } from "app/core/auth/account.service";
-import { IShoppingList } from "app/entities/shopping-list/shopping-list.model";
-import { Subject, takeUntil } from "rxjs";
+import { ShoppingStatus } from "app/entities/enumerations/shopping-status.model";
+import { ShoppingListDeleteDialogComponent } from "app/entities/shopping-list/delete/shopping-list-delete-dialog.component";
+import { IShoppingList, ShoppingList } from "app/entities/shopping-list/shopping-list.model";
+import { finalize, Observable, Subject, takeUntil } from "rxjs";
 import { MyShoppingListService } from "./my-shopping-list.service";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'jhi-myshoppinglist',
     templateUrl: './my-shopping-list.component.html'
   })
 export class MyShoppingListComponent implements OnInit, OnDestroy {
-    shoppingLists: IShoppingList[] =  [];
+    shoppingDraftLists: IShoppingList[] =  [];
+    shoppingOrderedLists: IShoppingList[] =  [];
     user : User = {};
     account: Account | null = null;
 
     private readonly destroy$ = new Subject<void>();
     
     constructor(protected myShoppingListService: MyShoppingListService,
-        private accountService: AccountService){
-        this.shoppingLists = [];
+        private accountService: AccountService,
+        protected modalService: NgbModal,){
+        this.shoppingDraftLists = [];
     }
     ngOnInit(): void {
         this.accountService
@@ -29,30 +34,76 @@ export class MyShoppingListComponent implements OnInit, OnDestroy {
         .subscribe(account => {
             this.account =  account;
             if (account !== null) {
-                this.loadShoppingLists(account); 
-            } else {
-                // eslint-disable-next-line no-console
-                console.log("condition non verifie");
+                this.loadDraftShoppingLists(account); 
+                this.loadOrderedShoppingLists(account); 
             }
         });
     }
 
-    loadShoppingLists(account: Account): void{
-        
+    loadDraftShoppingLists(account: Account): void{
         this.myShoppingListService
-            .queryByUserLogin(account.login)
+            .queryByStatusAndUserLogin(account.login, ShoppingStatus.DRAFT)
             .subscribe((res: HttpResponse<IShoppingList[]>) => {
-                this.shoppingLists = res.body ?? []
+                this.shoppingDraftLists = res.body ?? []
               });
     }
+
+    loadOrderedShoppingLists(account: Account): void{
+        this.myShoppingListService
+            .queryByStatusAndUserLogin(account.login, ShoppingStatus.ORDERED)
+            .subscribe((res: HttpResponse<IShoppingList[]>) => {
+                this.shoppingOrderedLists = res.body ?? []
+              });
+    }
+
+    order(shoppingList: ShoppingList): void {
+        this.subscribeToSaveResponse(this.myShoppingListService.order(shoppingList));
+    }
+
 
     trackId(index: number, item: IShoppingList): number {
         return item.id!;
       }
     
+    delete(shoppingList: IShoppingList): void {
+        const modalRef = this.modalService.open(ShoppingListDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.shoppingList = shoppingList;
+        // unsubscribe not needed because closed completes on modal close
+        modalRef.closed.subscribe(reason => {
+          if (reason === 'deleted') {
+            this.reset();
+          }
+        });
+    }
+    
+    reset(): void {
+        if (this.account !== null) {
+            this.loadDraftShoppingLists(this.account); 
+            this.loadOrderedShoppingLists(this.account); 
+        }
+      }
 
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+      }
+
+      protected subscribeToSaveResponse(result: Observable<HttpResponse<IShoppingList>>): void {
+        result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
+          next: () => this.onSaveSuccess(),
+          error: () => this.onSaveError(),
+        });
+      }
+    
+      protected onSaveSuccess(): void {
+        this.reset();
+      }
+    
+      protected onSaveError(): void {
+        // Api for inheritance.
+      }
+    
+      protected onSaveFinalize(): void {
+          // Api for inheritance.
       }
 }

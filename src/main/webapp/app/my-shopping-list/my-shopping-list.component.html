@@ -1,58 +1,113 @@
 <div>
-    <h2 id="page-heading" data-cy="ShoppingListHeading">
-      <span jhiTranslate="recipebookApp.shoppingList.home.title">Shopping Lists</span>
-    </h2>
-    
-    <jhi-alert></jhi-alert>
+  <jhi-alert></jhi-alert>
+      <h2 id="page-heading" data-cy="ShoppingListHeading">
+        <span> My shopping List</span>
+      </h2>
+      <div class="alert alert-info" id="no-result" *ngIf="shoppingDraftLists?.length === 0">
+        <span jhiTranslate="recipebookApp.shoppingList.home.notFound">No shoppingLists found</span>
+      </div>
+    <span *ngIf="shoppingDraftLists && shoppingDraftLists.length > 0">
+      <div class="row" *ngFor="let shoppingList of shoppingDraftLists; trackBy: trackId">
+        <div class="col-md-8">
+              <div class="table-responsive tabl" id="entities" 
+                  *ngIf="shoppingList.ingredients && shoppingList.ingredients.length > 0">
+                <table class="table table-striped table-hover" aria-describedby="page-heading">
+                  <thead>
+                    <tr>
+                      <th>
+                        <span>Ingredients</span>
+                      </th>
+                      <th>
+                        <span>Amount</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let ingredient of shoppingList.ingredients">
+                      <td>
+                          <span>{{ingredient.name}}</span>
+                      </td>
+                      <td>
+                        <span>{{ingredient.amount}}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+        </div>
   
-    <div class="alert alert-warning" id="no-result" *ngIf="shoppingLists?.length === 0">
+        <div class="col-md-4">
+          <div class="btn-group">
+            <button type="submit" [routerLink]="['/shopping-list', shoppingList.id, 'edit']"
+              class="btn btn-info btn-sm" data-cy="entityEditButton">
+              <span class="d-none d-md-inline" >Update</span>
+            </button>
+            <button type="submit" class="btn btn-primary btn-sm"
+            (click)="order(shoppingList)">
+            <span class="d-none d-md-inline" >Order</span>
+            </button>
+      
+            <button type="submit" (click)="delete(shoppingList)"  class="btn btn-danger" data-cy="entityDeleteButton">
+              <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </span>
+
+  
+
+  
+
+
+
+    <h3 id="page-heading" data-cy="ShoppingListHeading">
+        <span> Ordered Shopping Lists</span>
+    </h3>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="shoppingOrderedLists?.length === 0">
       <span jhiTranslate="recipebookApp.shoppingList.home.notFound">No shoppingLists found</span>
     </div>
   
-    <div class="table-responsive tabl" id="entities" *ngIf="shoppingLists && shoppingLists.length > 0">
-      <table class="table table-striped table-hover" aria-describedby="page-heading">
-        <thead>
-          <tr>
-            <th>
-              <span jhiTranslate="recipebookApp.shoppingList.user">User</span>
-            </th>
-            <th>
-                <span>Ingredients</span>
-            </th>
+    <span *ngIf="shoppingOrderedLists && shoppingOrderedLists.length > 0">
+      <span *ngFor="let shoppingList of shoppingOrderedLists; trackBy: trackId">
+        <div class="row">
+            <div class=col-md-8>
+                <div class="table-responsive tabl" id="entities" 
+                *ngIf="shoppingList.ingredients && shoppingList.ingredients.length > 0">
+              <table class="table table-striped table-hover" aria-describedby="page-heading">
+                <thead>
+                  <tr>
+                    <th>
+                      <span>Ingredients</span>
+                    </th>
+                    <th>
+                      <span>Amount</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ingredient of shoppingList.ingredients">
+                    <td>
+                        <span>{{ingredient.name}}</span>
+                    </td>
+                    <td>
+                      <span>{{ingredient.amount}}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class=col-md-4>
+            <button type="submit" class="btn btn-primary btn-sm" disabled>Order Again</button>
+          </div>
 
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let shoppingList of shoppingLists; trackBy: trackId" data-cy="entityTable">
-            <td>
-                <span>
-                    <span>{{ shoppingList.user?.login }}</span>
-                  </span>
-            </td>
-            <td>
-                <span *ngFor="let ingredient of shoppingList.ingredients; let last = last">
-                    <span>{{ingredient.name}}</span>{{ last ? "" : ", " }}
-                  </span>
-            </td>
-            <td class="text-right">
-              <div class="btn-group">
-                <button
-                  type="submit"
-                  [routerLink]="['/shopping-list', shoppingList.id, 'view']"
-                  class="btn btn-info btn-sm"
-                  data-cy="entityDetailsButton"
-                >
-                  <fa-icon icon="eye"></fa-icon>
-                  <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                </button>
-  
+        </div>
 
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      </span>
+
+    </span>
+
   </div>
   

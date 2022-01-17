@@ -21,4 +21,10 @@ public interface RcbShoppingListRepository extends ShoppingListRepository {
     "where shoppingList.user.login =:userLogin and shoppingList.shoppingStatus like 'DRAFT'")
     List<ShoppingList> findAllDraftWithEagerRelationshipsUserLogin(
         @Param("userLogin") String userLogin);
+    
+    @Query("select distinct shoppingList " + 
+    "from ShoppingList shoppingList left join fetch shoppingList.ingredients " + 
+    "where shoppingList.user.login =:userLogin and shoppingList.shoppingStatus like 'ORDERED'")
+    List<ShoppingList> findAllOrderedtWithEagerRelationshipsUserLogin(
+        @Param("userLogin") String userLogin);
 }

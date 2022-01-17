@@ -1,10 +1,12 @@
 import { HttpClient, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ApplicationConfigService } from "app/core/config/application-config.service";
-import { IShoppingList } from "app/entities/shopping-list/shopping-list.model";
+import { ShoppingStatus } from "app/entities/enumerations/shopping-status.model";
+import { getShoppingListIdentifier, IShoppingList } from "app/entities/shopping-list/shopping-list.model";
 import { Observable } from "rxjs";
 
 export type EntityArrayResponseType = HttpResponse<IShoppingList[]>;
+export type EntityResponseType = HttpResponse<IShoppingList>;
 
 @Injectable({ providedIn: 'root' })
 export class MyShoppingListService {
@@ -12,9 +14,21 @@ export class MyShoppingListService {
 
     constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
+    order(shoppingList: IShoppingList): Observable<EntityResponseType> {
+        return this.http.put<IShoppingList>(`${this.resourceUrl}/shopping-lists/${getShoppingListIdentifier(shoppingList) as number}/order`, shoppingList, {
+          observe: 'response',
+        });
+      }
+
     queryByUserLogin(userLogin: string): Observable<EntityArrayResponseType> {
         return this.http.get<IShoppingList[]>(
             this.resourceUrl + '/user/' + userLogin + '/shopping-lists', 
+            { observe: 'response' });
+      }
+    
+    queryByStatusAndUserLogin(userLogin: string, status: ShoppingStatus): Observable<EntityArrayResponseType> {
+        return this.http.get<IShoppingList[]>(
+            this.resourceUrl + '/user/' + userLogin + '/shopping-lists/' + status, 
             { observe: 'response' });
       }
 }
