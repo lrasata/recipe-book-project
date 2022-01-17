@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.testcontainers.shaded.org.awaitility.reflect.exception.TooManyFieldsFoundException;
 
 import tech.jhipster.web.util.HeaderUtil;
 
@@ -64,6 +65,9 @@ public class RcbShoppingListResource {
         log.debug("REST request to save ShoppingList : {}", shoppingList);
         if (shoppingList.getId() != null) {
             throw new BadRequestAlertException("A new shoppingList cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (shoppingList.getUser().getId() == null) {
+            throw new BadRequestAlertException("A new shoppingList must have User ", ENTITY_NAME,"usermustexist");
         }
         ShoppingList result = this.rcbShoppingListService.create(shoppingList);
         return ResponseEntity

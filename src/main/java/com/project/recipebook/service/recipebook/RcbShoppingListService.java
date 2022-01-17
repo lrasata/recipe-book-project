@@ -1,9 +1,7 @@
 package com.project.recipebook.service.recipebook;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -14,8 +12,7 @@ import com.project.recipebook.domain.Ingredient;
 import com.project.recipebook.domain.ShoppingList;
 import com.project.recipebook.domain.enumeration.ShoppingStatus;
 import com.project.recipebook.repository.recipebook.RcbShoppingListRepository;
-import com.project.recipebook.web.rest.errors.BadRequestAlertException;
-import com.project.recipebook.web.rest.errors.TooManyShoppingListDraftException;
+import com.project.recipebook.service.recipebook.error.TooManyShoppingListDraftException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,10 +35,7 @@ public class RcbShoppingListService {
         this.rcbShoppingListRepository = rcbShoppingListRepository;
     }
 
-    public ShoppingList create(ShoppingList shoppingList) throws URISyntaxException, TooManyShoppingListDraftException  {
-        if (shoppingList.getUser().getId() == null) {
-            throw new BadRequestAlertException("A new shoppingList must have User ", ENTITY_NAME,"usermustexist");
-        }
+    public ShoppingList create(ShoppingList shoppingList) throws TooManyShoppingListDraftException{
         List<ShoppingList> existingShoppingListByUser = this.rcbShoppingListRepository
             .findAllDraftWithEagerRelationshipsUserLogin(shoppingList.getUser().getLogin());
         if (existingShoppingListByUser.isEmpty()) {
@@ -74,7 +68,6 @@ public class RcbShoppingListService {
                 Long amountToAdd = i.getAmount();
                 existingIngredients.get(index).setAmount(initialAmount + amountToAdd);
             } else {
-                log.debug("XXXXXXXXXXXXXXXXXXXXXXX");
                 existingIngredients.add(i);
             }
         } 
