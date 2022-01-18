@@ -14,6 +14,12 @@ export class MyShoppingListService {
 
     constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
+    update(shoppingList: IShoppingList): Observable<EntityResponseType> {
+      return this.http.put<IShoppingList>(`${this.resourceUrl}/shopping-lists/${getShoppingListIdentifier(shoppingList) as number}`, shoppingList, {
+        observe: 'response',
+      });
+    }
+
     order(shoppingList: IShoppingList): Observable<EntityResponseType> {
         return this.http.put<IShoppingList>(`${this.resourceUrl}/shopping-lists/${getShoppingListIdentifier(shoppingList) as number}/order`, shoppingList, {
           observe: 'response',
@@ -31,4 +37,6 @@ export class MyShoppingListService {
             this.resourceUrl + '/user/' + userLogin + '/shopping-lists/' + status, 
             { observe: 'response' });
       }
+    
+    
 }

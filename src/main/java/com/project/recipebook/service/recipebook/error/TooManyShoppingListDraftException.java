@@ -1,4 +1,6 @@
-package com.project.recipebook.web.rest.errors;
+package com.project.recipebook.service.recipebook.error;
+
+import com.project.recipebook.web.rest.errors.ErrorConstants;
 
 import org.zalando.problem.AbstractThrowableProblem;
 import org.zalando.problem.Status;
