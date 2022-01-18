@@ -15,6 +15,7 @@ import com.project.recipebook.repository.ShoppingListRepository;
 import com.project.recipebook.web.rest.TestUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -133,6 +134,29 @@ class RcbShoppingListResourceIT {
 
     @Test
     @Transactional
+    void createShouldAddAnotherShoppingListAsFirstOneIsOrdered() throws Exception {
+        shoppingList.setShoppingStatus(ShoppingStatus.ORDERED);
+        shoppingListRepository.saveAndFlush(shoppingList);
+
+        shoppingList.setShoppingStatus(ShoppingStatus.DRAFT);
+        int databaseSizeBeforeCreate = shoppingListRepository.findAll().size();
+        // Create the ShoppingList
+        restShoppingListMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(shoppingList)))
+            .andExpect(status().isCreated());
+
+        // Validate the ShoppingList in the database
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeCreate + 1);
+        ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(DEFAULT_SHOPPING_STATUS);
+        ShoppingList testShoppingListIngredientAmount = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingListIngredientAmount.getIngredients()).isNotEmpty();
+
+    }
+
+    @Test
+    @Transactional
     void createShoppingListShouldAddAnotherIngredientInExistingDraftShoppingList() throws Exception {
         Ingredient ingredient2 = createIngredientEntity(em);
         ingredientRepository.saveAndFlush(ingredient2);
@@ -153,6 +177,193 @@ class RcbShoppingListResourceIT {
         ShoppingList testShoppingListIngredientAmount = shoppingListList.get(shoppingListList.size() - 1);
         assertThat(testShoppingListIngredientAmount.getIngredients().size()).isEqualTo(2);
     }
+
+    @Test
+    @Transactional
+    void putNewShoppingList() throws Exception {
+        // Initialize the database
+        shoppingListRepository.saveAndFlush(shoppingList);
+
+        int databaseSizeBeforeUpdate = shoppingListRepository.findAll().size();
+
+        // Update the shoppingList
+        ShoppingList updatedShoppingList = shoppingListRepository.findById(shoppingList.getId()).get();
+        // Disconnect from session so that the updates on updatedShoppingList are not directly saved in db
+        em.detach(updatedShoppingList);
+        updatedShoppingList.shoppingStatus(UPDATED_SHOPPING_STATUS);
+
+        restShoppingListMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedShoppingList.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedShoppingList))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the ShoppingList in the database
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
+        ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(UPDATED_SHOPPING_STATUS);
+    }
+
+    @Test
+    @Transactional
+    void putNonExistingShoppingList() throws Exception {
+        int databaseSizeBeforeUpdate = shoppingListRepository.findAll().size();
+        shoppingList.setId(count.incrementAndGet());
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restShoppingListMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, shoppingList.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(shoppingList))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the ShoppingList in the database
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putWithIdMismatchShoppingList() throws Exception {
+        int databaseSizeBeforeUpdate = shoppingListRepository.findAll().size();
+        shoppingList.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restShoppingListMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(shoppingList))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the ShoppingList in the database
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putOrderedShoppingListStayOrdered() throws Exception {
+        // Initialize the database
+        shoppingList.setShoppingStatus(ShoppingStatus.ORDERED);
+        shoppingListRepository.saveAndFlush(shoppingList);
+
+        int databaseSizeBeforeUpdate = shoppingListRepository.findAll().size();
+
+        // Update the shoppingList
+        ShoppingList updatedShoppingList = shoppingListRepository.findById(shoppingList.getId()).get();
+        // Disconnect from session so that the updates on updatedShoppingList are not directly saved in db
+        em.detach(updatedShoppingList);
+        updatedShoppingList.shoppingStatus(ShoppingStatus.DRAFT);
+
+        restShoppingListMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedShoppingList.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedShoppingList))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the ShoppingList in the database
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
+        ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(ShoppingStatus.ORDERED);
+    }
+
+    @Test
+    @Transactional
+    void putDraftShoppingListStaytToOrdered() throws Exception {
+        // Initialize the database
+        shoppingList.setShoppingStatus(ShoppingStatus.DRAFT);
+        shoppingListRepository.saveAndFlush(shoppingList);
+
+        int databaseSizeBeforeUpdate = shoppingListRepository.findAll().size();
+
+        // Update the shoppingList
+        ShoppingList updatedShoppingList = shoppingListRepository.findById(shoppingList.getId()).get();
+        // Disconnect from session so that the updates on updatedShoppingList are not directly saved in db
+        em.detach(updatedShoppingList);
+        updatedShoppingList.shoppingStatus(ShoppingStatus.ORDERED);
+
+        restShoppingListMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedShoppingList.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedShoppingList))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the ShoppingList in the database
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
+        ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(ShoppingStatus.ORDERED);
+    }
+
+    @Test
+    @Transactional
+    void orderShoppingList() throws Exception {
+        // Initialize the database
+        shoppingList.setShoppingStatus(ShoppingStatus.DRAFT);
+        shoppingListRepository.saveAndFlush(shoppingList);
+
+        int databaseSizeBeforeUpdate = shoppingListRepository.findAll().size();
+
+        // Update the shoppingList
+        ShoppingList updatedShoppingList = shoppingListRepository.findById(shoppingList.getId()).get();
+        // Disconnect from session so that the updates on updatedShoppingList are not directly saved in db
+        em.detach(updatedShoppingList);
+        updatedShoppingList.shoppingStatus(ShoppingStatus.ORDERED);
+
+        restShoppingListMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedShoppingList.getId(), "order")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedShoppingList))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the ShoppingList in the database
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
+        ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
+        assertThat(testShoppingList.getShoppingStatus()).isEqualTo(ShoppingStatus.ORDERED);
+    }
+
+    @Test
+    @Transactional
+    void orderShoppingListMustContainListOfIngredients() throws Exception {
+        // Initialize the database
+        shoppingListRepository.saveAndFlush(shoppingList);
+
+        int databaseSizeBeforeUpdate = shoppingListRepository.findAll().size();
+
+        // Update the shoppingList
+        ShoppingList updatedShoppingList = shoppingListRepository.findById(shoppingList.getId()).get();
+        // Disconnect from session so that the updates on updatedShoppingList are not directly saved in db
+        em.detach(updatedShoppingList);
+        updatedShoppingList.setIngredients(new HashSet<Ingredient>());
+
+        restShoppingListMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedShoppingList.getId(), "order")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedShoppingList))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the ShoppingList in the database
+        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
+    }
+
 
     @Test
     @Transactional

@@ -18,9 +18,6 @@
         <div>
           <jhi-alert-error></jhi-alert-error>
           <div>
-              <strong>User creator : </strong> {{initialShoppingList.user?.login}} 
-          </div>
-          <div>
             <strong>Status : </strong> {{initialShoppingList.shoppingStatus}} 
         </div>
 
@@ -49,10 +46,10 @@
                     </td>
                     <td class="text-right">
                         <button
-                        type="submit"
+                        type="button"
                         class="btn btn-info btn-sm"
-                        disabled
-                      >
+                        [disabled]="true"
+                        >
                         <span class="d-none d-md-inline">Change amount</span>
                       </button>
                     </td>

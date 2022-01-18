@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.testcontainers.shaded.org.awaitility.reflect.exception.TooManyFieldsFoundException;
 
 import tech.jhipster.web.util.HeaderUtil;
 
@@ -141,6 +140,10 @@ public class RcbShoppingListResource {
 
         if (!shoppingListRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        if (shoppingList.getIngredients().isEmpty()) {
+            throw new BadRequestAlertException("ShoppingList Must contain List of Ingredients", ENTITY_NAME, "emptyIngredients");
         }
 
         shoppingList.setShoppingStatus(ShoppingStatus.ORDERED);
