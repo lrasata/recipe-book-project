@@ -8,12 +8,15 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +54,7 @@ public class RecipeResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/recipes")
-    public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) throws URISyntaxException {
+    public ResponseEntity<Recipe> createRecipe(@Valid @RequestBody Recipe recipe) throws URISyntaxException {
         log.debug("REST request to save Recipe : {}", recipe);
         if (recipe.getId() != null) {
             throw new BadRequestAlertException("A new recipe cannot already have an ID", ENTITY_NAME, "idexists");
@@ -74,8 +77,10 @@ public class RecipeResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/recipes/{id}")
-    public ResponseEntity<Recipe> updateRecipe(@PathVariable(value = "id", required = false) final Long id, @RequestBody Recipe recipe)
-        throws URISyntaxException {
+    public ResponseEntity<Recipe> updateRecipe(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody Recipe recipe
+    ) throws URISyntaxException {
         log.debug("REST request to update Recipe : {}, {}", id, recipe);
         if (recipe.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -109,7 +114,7 @@ public class RecipeResource {
     @PatchMapping(value = "/recipes/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Recipe> partialUpdateRecipe(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Recipe recipe
+        @NotNull @RequestBody Recipe recipe
     ) throws URISyntaxException {
         log.debug("REST request to partial update Recipe partially : {}, {}", id, recipe);
         if (recipe.getId() == null) {

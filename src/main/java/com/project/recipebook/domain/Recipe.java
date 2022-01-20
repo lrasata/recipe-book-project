@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 /**
  * Recipe Entity.\n@author lrasata.
@@ -23,7 +24,8 @@ public class Recipe implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title")
+    @NotNull
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description")
@@ -42,7 +44,7 @@ public class Recipe implements Serializable {
         joinColumns = @JoinColumn(name = "recipe_id"),
         inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )
-    @JsonIgnoreProperties(value = { "recipes", "shoppingLists" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "recipes" }, allowSetters = true)
     private Set<Ingredient> ingredients = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

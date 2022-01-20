@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity ShoppingList.
+    -->
+    <changeSet id="20220112205538" author="lrasata">
+        <loadData
+                  file="config/liquibase/fake-data/rel_shopping_list__ingredient_order.csv"
+                  separator=";"
+                  tableName="rel_recipe__ingredient"
+                  usePreparedStatements="true">
+                  <column name="ingredient_order_id" type="numeric"/>
+                  <column name="shopping_list_id" type="numeric"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>

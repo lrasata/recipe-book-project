@@ -3,7 +3,7 @@ import { IIngredient } from 'app/entities/ingredient/ingredient.model';
 
 export interface IRecipe {
   id?: number;
-  title?: string | null;
+  title?: string;
   description?: string | null;
   imagePath?: string | null;
   user?: IUser | null;
@@ -14,7 +14,7 @@ export interface IRecipe {
 export class Recipe implements IRecipe {
   constructor(
     public id?: number,
-    public title?: string | null,
+    public title?: string,
     public description?: string | null,
     public imagePath?: string | null,
     public user?: IUser | null,

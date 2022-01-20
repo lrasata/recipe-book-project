@@ -3,7 +3,10 @@ package com.project.recipebook.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 /**
  * Ingredient Order Entity
@@ -21,16 +24,17 @@ public class IngredientOrder implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "amount_order")
+    @NotNull
+    @Column(name = "amount_order", nullable = false)
     private Long amountOrder;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "recipes" }, allowSetters = true)
     private Ingredient ingredient;
 
-    @ManyToOne
+    @ManyToMany(mappedBy = "ingredientOrders")
     @JsonIgnoreProperties(value = { "user", "ingredientOrders" }, allowSetters = true)
-    private ShoppingList shoppingList;
+    private Set<ShoppingList> shoppingLists = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -73,16 +77,34 @@ public class IngredientOrder implements Serializable {
         return this;
     }
 
-    public ShoppingList getShoppingList() {
-        return this.shoppingList;
+    public Set<ShoppingList> getShoppingLists() {
+        return this.shoppingLists;
     }
 
-    public void setShoppingList(ShoppingList shoppingList) {
-        this.shoppingList = shoppingList;
+    public void setShoppingLists(Set<ShoppingList> shoppingLists) {
+        if (this.shoppingLists != null) {
+            this.shoppingLists.forEach(i -> i.removeIngredientOrder(this));
+        }
+        if (shoppingLists != null) {
+            shoppingLists.forEach(i -> i.addIngredientOrder(this));
+        }
+        this.shoppingLists = shoppingLists;
     }
 
-    public IngredientOrder shoppingList(ShoppingList shoppingList) {
-        this.setShoppingList(shoppingList);
+    public IngredientOrder shoppingLists(Set<ShoppingList> shoppingLists) {
+        this.setShoppingLists(shoppingLists);
+        return this;
+    }
+
+    public IngredientOrder addShoppingList(ShoppingList shoppingList) {
+        this.shoppingLists.add(shoppingList);
+        shoppingList.getIngredientOrders().add(this);
+        return this;
+    }
+
+    public IngredientOrder removeShoppingList(ShoppingList shoppingList) {
+        this.shoppingLists.remove(shoppingList);
+        shoppingList.getIngredientOrders().remove(this);
         return this;
     }
 

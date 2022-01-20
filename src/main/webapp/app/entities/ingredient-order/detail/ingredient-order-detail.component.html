@@ -26,12 +26,6 @@
             <a [routerLink]="['/ingredient', ingredientOrder.ingredient?.id, 'view']">{{ ingredientOrder.ingredient?.id }}</a>
           </div>
         </dd>
-        <dt><span jhiTranslate="recipebookApp.ingredientOrder.shoppingList">Shopping List</span></dt>
-        <dd>
-          <div *ngIf="ingredientOrder.shoppingList">
-            <a [routerLink]="['/shopping-list', ingredientOrder.shoppingList?.id, 'view']">{{ ingredientOrder.shoppingList?.id }}</a>
-          </div>
-        </dd>
       </dl>
 
       <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

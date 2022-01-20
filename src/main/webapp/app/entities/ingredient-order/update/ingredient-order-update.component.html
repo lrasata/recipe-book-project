@@ -29,6 +29,22 @@
             data-cy="amountOrder"
             formControlName="amountOrder"
           />
+          <div *ngIf="editForm.get('amountOrder')!.invalid && (editForm.get('amountOrder')!.dirty || editForm.get('amountOrder')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('amountOrder')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('amountOrder')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              This field should be a number.
+            </small>
+          </div>
         </div>
 
         <div class="form-group">
@@ -44,23 +60,6 @@
               *ngFor="let ingredientOption of ingredientsSharedCollection; trackBy: trackIngredientById"
             >
               {{ ingredientOption.id }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="recipebookApp.ingredientOrder.shoppingList" for="field_shoppingList"
-            >Shopping List</label
-          >
-          <select class="form-control" id="field_shoppingList" data-cy="shoppingList" name="shoppingList" formControlName="shoppingList">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="
-                shoppingListOption.id === editForm.get('shoppingList')!.value?.id ? editForm.get('shoppingList')!.value : shoppingListOption
-              "
-              *ngFor="let shoppingListOption of shoppingListsSharedCollection; trackBy: trackShoppingListById"
-            >
-              {{ shoppingListOption.id }}
             </option>
           </select>
         </div>

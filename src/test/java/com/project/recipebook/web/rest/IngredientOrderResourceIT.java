@@ -116,6 +116,25 @@ class IngredientOrderResourceIT {
 
     @Test
     @Transactional
+    void checkAmountOrderIsRequired() throws Exception {
+        int databaseSizeBeforeTest = ingredientOrderRepository.findAll().size();
+        // set the field null
+        ingredientOrder.setAmountOrder(null);
+
+        // Create the IngredientOrder, which fails.
+
+        restIngredientOrderMockMvc
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(ingredientOrder))
+            )
+            .andExpect(status().isBadRequest());
+
+        List<IngredientOrder> ingredientOrderList = ingredientOrderRepository.findAll();
+        assertThat(ingredientOrderList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllIngredientOrders() throws Exception {
         // Initialize the database
         ingredientOrderRepository.saveAndFlush(ingredientOrder);

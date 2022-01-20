@@ -24,7 +24,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="user_id" type="bigint">
-                <constraints nullable="false" unique="false" uniqueConstraintName="ux_recipe__user_id" />
+                <constraints nullable="true" unique="false" uniqueConstraintName="ux_recipe__user_id" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
@@ -64,7 +64,6 @@
             <column name="title" type="string"/>
             <column name="description" type="string"/>
             <column name="image_path" type="string"/>
-            <column name="user_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

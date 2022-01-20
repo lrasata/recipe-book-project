@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 /**
  * Ingredient Entity
@@ -25,10 +24,12 @@ public class Ingredient implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @NotNull
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "amount")
+    @NotNull
+    @Column(name = "amount", nullable = false)
     private Long amount;
 
     @ManyToMany(mappedBy = "ingredients")

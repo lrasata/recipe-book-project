@@ -13,11 +13,5 @@
                                  constraintName="fk_ingredient_order__ingredient_id"
                                  referencedColumnNames="id"
                                  referencedTableName="ingredient"/>
-
-        <addForeignKeyConstraint baseColumnNames="shopping_list_id"
-                                 baseTableName="ingredient_order"
-                                 constraintName="fk_ingredient_order__shopping_list_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="shopping_list"/>
     </changeSet>
 </databaseChangeLog>

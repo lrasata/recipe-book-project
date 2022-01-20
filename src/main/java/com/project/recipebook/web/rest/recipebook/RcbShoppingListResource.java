@@ -102,13 +102,8 @@ public class RcbShoppingListResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        shoppingList.setShoppingStatus(this.rcbShoppingListService.getCorrectStatus(
-            shoppingListRepository.getById(
-                    shoppingList.getId()).getShoppingStatus(), 
-                    shoppingList.getShoppingStatus()
-            )
-        );
-        ShoppingList result = shoppingListRepository.save(shoppingList);
+        
+        ShoppingList result = rcbShoppingListService.update(shoppingList);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, shoppingList.getId().toString()))
@@ -146,8 +141,7 @@ public class RcbShoppingListResource {
             throw new BadRequestAlertException("ShoppingList Must contain List of Ingredients", ENTITY_NAME, "emptyIngredients");
         }
 
-        shoppingList.setShoppingStatus(ShoppingStatus.ORDERED);
-        ShoppingList result = shoppingListRepository.save(shoppingList);
+        ShoppingList result = rcbShoppingListService.order(shoppingList);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, shoppingList.getId().toString()))
@@ -162,7 +156,7 @@ public class RcbShoppingListResource {
     @GetMapping("/shopping-lists")
     public ResponseEntity<List<ShoppingList>> getAllShoppingList() {
         log.debug("REST request to get a list of Shopping List");
-        List<ShoppingList> shoppingLists= this.shoppingListRepository.findAllWithEagerRelationships();
+        List<ShoppingList> shoppingLists= this.shoppingListRepository.findAll();
 
         return ResponseEntity.ok().body(shoppingLists);
     }
@@ -194,10 +188,10 @@ public class RcbShoppingListResource {
         List<ShoppingList> shoppingLists = new ArrayList<ShoppingList>();
         switch(status.name()) {
             case "DRAFT":
-                shoppingLists= this.shoppingListRepository.findAllDraftWithEagerRelationshipsUserLogin(userLogin);
+                shoppingLists= this.shoppingListRepository.findAllWithEagerRelationshipsDraftByUserLogin(userLogin);
                 return ResponseEntity.ok().body(shoppingLists);
             case "ORDERED":
-                shoppingLists= this.shoppingListRepository.findAllOrderedtWithEagerRelationshipsUserLogin(userLogin);
+                shoppingLists= this.shoppingListRepository.findAllWithEagerRelationshipsOrderedByUserLogin(userLogin);
                 return ResponseEntity.ok().body(shoppingLists);
             default:
             return ResponseEntity.ok().body(shoppingLists);

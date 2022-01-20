@@ -34,8 +34,13 @@ public class ShoppingList implements Serializable {
     @JoinColumn(unique = true)
     private User user;
 
-    @OneToMany(mappedBy = "shoppingList")
-    @JsonIgnoreProperties(value = { "ingredient", "shoppingList" }, allowSetters = true)
+    @ManyToMany
+    @JoinTable(
+        name = "rel_shopping_list__ingredient_order",
+        joinColumns = @JoinColumn(name = "shopping_list_id"),
+        inverseJoinColumns = @JoinColumn(name = "ingredient_order_id")
+    )
+    @JsonIgnoreProperties(value = { "ingredient", "shoppingLists" }, allowSetters = true)
     private Set<IngredientOrder> ingredientOrders = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -84,12 +89,6 @@ public class ShoppingList implements Serializable {
     }
 
     public void setIngredientOrders(Set<IngredientOrder> ingredientOrders) {
-        if (this.ingredientOrders != null) {
-            this.ingredientOrders.forEach(i -> i.setShoppingList(null));
-        }
-        if (ingredientOrders != null) {
-            ingredientOrders.forEach(i -> i.setShoppingList(this));
-        }
         this.ingredientOrders = ingredientOrders;
     }
 
@@ -100,13 +99,13 @@ public class ShoppingList implements Serializable {
 
     public ShoppingList addIngredientOrder(IngredientOrder ingredientOrder) {
         this.ingredientOrders.add(ingredientOrder);
-        ingredientOrder.setShoppingList(this);
+        ingredientOrder.getShoppingLists().add(this);
         return this;
     }
 
     public ShoppingList removeIngredientOrder(IngredientOrder ingredientOrder) {
         this.ingredientOrders.remove(ingredientOrder);
-        ingredientOrder.setShoppingList(null);
+        ingredientOrder.getShoppingLists().remove(this);
         return this;
     }
 

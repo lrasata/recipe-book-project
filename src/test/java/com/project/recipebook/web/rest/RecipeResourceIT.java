@@ -131,6 +131,23 @@ class RecipeResourceIT {
 
     @Test
     @Transactional
+    void checkTitleIsRequired() throws Exception {
+        int databaseSizeBeforeTest = recipeRepository.findAll().size();
+        // set the field null
+        recipe.setTitle(null);
+
+        // Create the Recipe, which fails.
+
+        restRecipeMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(recipe)))
+            .andExpect(status().isBadRequest());
+
+        List<Recipe> recipeList = recipeRepository.findAll();
+        assertThat(recipeList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllRecipes() throws Exception {
         // Initialize the database
         recipeRepository.saveAndFlush(recipe);

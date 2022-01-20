@@ -41,16 +41,12 @@ relationship OneToOne {
 
 relationship ManyToMany {
 	Recipe{ingredient} to Ingredient{recipe}
+	ShoppingList{IngredientOrder} to IngredientOrder{shoppingList}
 }
 
 relationship ManyToOne{
 	IngredientOrder{ingredient} to Ingredient
 }
-
-relationship OneToMany{
-	ShoppingList{IngredientOrder} to IngredientOrder
-}
-
 
 // Set pagination options
 paginate Recipe, Ingredient, IngredientOrder, ShoppingList with infinite-scroll

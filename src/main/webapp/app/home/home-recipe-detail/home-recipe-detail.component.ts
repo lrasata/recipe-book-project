@@ -3,6 +3,8 @@ import { Component, Input, OnInit } from "@angular/core";
 import { UserManagementService } from "app/admin/user-management/service/user-management.service";
 import { User } from "app/admin/user-management/user-management.model";
 import { ShoppingStatus } from "app/entities/enumerations/shopping-status.model";
+import { IngredientOrder } from "app/entities/ingredient-order/ingredient-order.model";
+import { Ingredient } from "app/entities/ingredient/ingredient.model";
 import { Recipe } from "app/entities/recipe/recipe.model";
 import { IShoppingList, ShoppingList } from "app/entities/shopping-list/shopping-list.model";
 import { Observable } from "rxjs";
@@ -33,8 +35,21 @@ import { HomeService } from "../home.service";
         const shoppingList = new ShoppingList();
         shoppingList.user = new User(this.user.id, this.user.login);
         shoppingList.shoppingStatus = ShoppingStatus.DRAFT;
-        //TODO shoppingList.ingredientOrders = this.recipe.ingredients?.slice();
-        //TODO this.subscribeToSaveResponse(this.homeService.addIngredientToMyShoppingList(shoppingList));
+
+        const ingredients = this.recipe.ingredients ?? [];
+        const ingredientOrders: IngredientOrder[] = [];
+        for (const i of ingredients) {
+          const iOrder = new IngredientOrder();
+
+          iOrder.ingredient = new Ingredient();
+          iOrder.ingredient.id = i.id;
+          iOrder.ingredient.amount = i.amount;
+          iOrder.ingredient.name = i.name;
+
+          iOrder.amountOrder = i.amount;
+          ingredientOrders.push(iOrder);
+        }
+        this.subscribeToSaveResponse(this.homeService.addIngredientToMyShoppingList(shoppingList));
     }
 
     protected subscribeToSaveResponse(result: Observable<HttpResponse<IShoppingList>>): void {

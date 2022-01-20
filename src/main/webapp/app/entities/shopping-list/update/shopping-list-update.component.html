@@ -60,6 +60,25 @@
             </option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label jhiTranslate="recipebookApp.shoppingList.ingredientOrder" for="field_ingredientOrders">Ingredient Order</label>
+          <select
+            class="form-control"
+            id="field_ingredientOrders"
+            data-cy="ingredientOrder"
+            multiple
+            name="ingredientOrders"
+            formControlName="ingredientOrders"
+          >
+            <option
+              [ngValue]="getSelectedIngredientOrder(ingredientOrderOption, editForm.get('ingredientOrders')!.value)"
+              *ngFor="let ingredientOrderOption of ingredientOrdersSharedCollection; trackBy: trackIngredientOrderById"
+            >
+              {{ ingredientOrderOption.id }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <div>

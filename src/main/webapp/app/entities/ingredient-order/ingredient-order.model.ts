@@ -3,17 +3,17 @@ import { IShoppingList } from 'app/entities/shopping-list/shopping-list.model';
 
 export interface IIngredientOrder {
   id?: number;
-  amountOrder?: number | null;
+  amountOrder?: number;
   ingredient?: IIngredient | null;
-  shoppingList?: IShoppingList | null;
+  shoppingLists?: IShoppingList[] | null;
 }
 
 export class IngredientOrder implements IIngredientOrder {
   constructor(
     public id?: number,
-    public amountOrder?: number | null,
+    public amountOrder?: number,
     public ingredient?: IIngredient | null,
-    public shoppingList?: IShoppingList | null
+    public shoppingLists?: IShoppingList[] | null
   ) {}
 }
 

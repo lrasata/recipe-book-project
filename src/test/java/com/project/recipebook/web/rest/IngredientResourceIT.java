@@ -116,6 +116,40 @@ class IngredientResourceIT {
 
     @Test
     @Transactional
+    void checkNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = ingredientRepository.findAll().size();
+        // set the field null
+        ingredient.setName(null);
+
+        // Create the Ingredient, which fails.
+
+        restIngredientMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(ingredient)))
+            .andExpect(status().isBadRequest());
+
+        List<Ingredient> ingredientList = ingredientRepository.findAll();
+        assertThat(ingredientList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkAmountIsRequired() throws Exception {
+        int databaseSizeBeforeTest = ingredientRepository.findAll().size();
+        // set the field null
+        ingredient.setAmount(null);
+
+        // Create the Ingredient, which fails.
+
+        restIngredientMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(ingredient)))
+            .andExpect(status().isBadRequest());
+
+        List<Ingredient> ingredientList = ingredientRepository.findAll();
+        assertThat(ingredientList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllIngredients() throws Exception {
         // Initialize the database
         ingredientRepository.saveAndFlush(ingredient);

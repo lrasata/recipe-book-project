@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +54,8 @@ public class IngredientOrderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/ingredient-orders")
-    public ResponseEntity<IngredientOrder> createIngredientOrder(@RequestBody IngredientOrder ingredientOrder) throws URISyntaxException {
+    public ResponseEntity<IngredientOrder> createIngredientOrder(@Valid @RequestBody IngredientOrder ingredientOrder)
+        throws URISyntaxException {
         log.debug("REST request to save IngredientOrder : {}", ingredientOrder);
         if (ingredientOrder.getId() != null) {
             throw new BadRequestAlertException("A new ingredientOrder cannot already have an ID", ENTITY_NAME, "idexists");
@@ -77,7 +80,7 @@ public class IngredientOrderResource {
     @PutMapping("/ingredient-orders/{id}")
     public ResponseEntity<IngredientOrder> updateIngredientOrder(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody IngredientOrder ingredientOrder
+        @Valid @RequestBody IngredientOrder ingredientOrder
     ) throws URISyntaxException {
         log.debug("REST request to update IngredientOrder : {}, {}", id, ingredientOrder);
         if (ingredientOrder.getId() == null) {
@@ -112,7 +115,7 @@ public class IngredientOrderResource {
     @PatchMapping(value = "/ingredient-orders/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<IngredientOrder> partialUpdateIngredientOrder(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody IngredientOrder ingredientOrder
+        @NotNull @RequestBody IngredientOrder ingredientOrder
     ) throws URISyntaxException {
         log.debug("REST request to partial update IngredientOrder partially : {}, {}", id, ingredientOrder);
         if (ingredientOrder.getId() == null) {

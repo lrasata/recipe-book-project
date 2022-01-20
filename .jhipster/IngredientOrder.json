@@ -3,7 +3,8 @@
   "fields": [
     {
       "fieldName": "amountOrder",
-      "fieldType": "Long"
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
     }
   ],
   "relationships": [
@@ -14,10 +15,11 @@
       "relationshipName": "ingredient"
     },
     {
-      "relationshipType": "many-to-one",
+      "relationshipType": "many-to-many",
       "otherEntityName": "shoppingList",
       "otherEntityRelationshipName": "ingredientOrder",
-      "relationshipName": "shoppingList"
+      "relationshipName": "shoppingList",
+      "ownerSide": false
     }
   ],
   "javadoc": "Ingredient Order Entity",

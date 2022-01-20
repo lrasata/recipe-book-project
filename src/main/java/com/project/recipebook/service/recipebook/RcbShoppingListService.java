@@ -3,15 +3,15 @@ package com.project.recipebook.service.recipebook;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.project.recipebook.domain.Ingredient;
 import com.project.recipebook.domain.IngredientOrder;
 import com.project.recipebook.domain.ShoppingList;
 import com.project.recipebook.domain.enumeration.ShoppingStatus;
+import com.project.recipebook.repository.IngredientOrderRepository;
+import com.project.recipebook.repository.IngredientRepository;
 import com.project.recipebook.repository.recipebook.RcbShoppingListRepository;
 import com.project.recipebook.service.recipebook.error.TooManyShoppingListDraftException;
 
@@ -28,53 +28,101 @@ public class RcbShoppingListService {
 
     private final RcbShoppingListRepository rcbShoppingListRepository;
 
+    private final IngredientRepository ingredientRepository;
+
+    private final IngredientOrderRepository ingredientOrderRepository;
+
     private static final String ENTITY_NAME = "rcbshoppinglist";
     
     public RcbShoppingListService(
-        RcbShoppingListRepository rcbShoppingListRepository
+        RcbShoppingListRepository rcbShoppingListRepository,
+        IngredientRepository ingredientRepository,
+        IngredientOrderRepository ingredientOrderRepository
     ){
         this.rcbShoppingListRepository = rcbShoppingListRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.ingredientOrderRepository = ingredientOrderRepository;
     }
 
     public ShoppingList create(ShoppingList shoppingList) throws TooManyShoppingListDraftException{
-        List<ShoppingList> existingShoppingListByUser = this.rcbShoppingListRepository
-            .findAllDraftWithEagerRelationshipsUserLogin(shoppingList.getUser().getLogin());
-        if (existingShoppingListByUser.isEmpty()) {
+        List<ShoppingList> existingDraftShoppingListByUser = this.rcbShoppingListRepository
+            .findAllWithEagerRelationshipsDraftByUserLogin(shoppingList.getUser().getLogin());
+
+
+        if (existingDraftShoppingListByUser.isEmpty()) {
             shoppingList.setShoppingStatus(ShoppingStatus.DRAFT);
+            this.saveIngredientOrdersFromNewShoppingList(shoppingList);
             return this.rcbShoppingListRepository.save(shoppingList);
-        } else if (existingShoppingListByUser.size() > 1) {
+        
+        } else if (existingDraftShoppingListByUser.size() > 1) {
             throw new TooManyShoppingListDraftException();
+        
         } else {
-            ShoppingList newShoppingList = merge2ShoppingListAndIncrementIngredientOrders(existingShoppingListByUser.get(0), shoppingList);
-            newShoppingList.setShoppingStatus(ShoppingStatus.DRAFT);
+            ShoppingList newShoppingList = mergeIngredientOrdersOfTwoShoppingLists(existingDraftShoppingListByUser.get(0), shoppingList);
+            shoppingList.setShoppingStatus(ShoppingStatus.DRAFT);
+            this.saveIngredientOrdersFromNewShoppingList(newShoppingList);
             return this.rcbShoppingListRepository.save(newShoppingList);
         }
 
     }
 
-    public ShoppingList merge2ShoppingListAndIncrementIngredientOrders(ShoppingList existingShoppingList, ShoppingList newShoppingList) {
+    public void saveIngredientOrdersFromNewShoppingList(ShoppingList shoppingList) {
+        List<IngredientOrder> ingredientOrders = new ArrayList<>(shoppingList.getIngredientOrders());
+        
+        for (IngredientOrder ingredientOrder: ingredientOrders) {
+            this.ingredientOrderRepository.save(ingredientOrder);
+        }
+    }
 
-        Set<IngredientOrder> newhashSet = newShoppingList.getIngredientOrders();
-        List<IngredientOrder> newIngredients = new ArrayList<>(newhashSet);
+    public ShoppingList update(ShoppingList newShoppingList) {
+        ShoppingList existingShoppingList = this.rcbShoppingListRepository.findById(newShoppingList.getId()).get();
 
-        Set<IngredientOrder> hashSet = existingShoppingList.getIngredientOrders();
-        List<IngredientOrder> existingIngredients = new ArrayList<>(hashSet);
+        ShoppingList result = mergeIngredientOrdersOfTwoShoppingLists(existingShoppingList, newShoppingList);
 
-        for (IngredientOrder i : newIngredients) {
-            int index = getIndexIngredientOrderInShoppingList(i, existingShoppingList);
+        result.setShoppingStatus(getCorrectStatus(
+            existingShoppingList.getShoppingStatus(), 
+                    newShoppingList.getShoppingStatus()
+            )
+        );
+        this.saveIngredientOrdersFromNewShoppingList(result);
+
+        return this.rcbShoppingListRepository.save(result);
+    }
+
+    public ShoppingList order(ShoppingList newShoppingList) {
+        ShoppingList existingShoppingList = this.rcbShoppingListRepository.findById(newShoppingList.getId()).get();
+
+        ShoppingList result = mergeIngredientOrdersOfTwoShoppingLists(existingShoppingList, newShoppingList);
+
+        result.setShoppingStatus(ShoppingStatus.ORDERED);
+        this.saveIngredientOrdersFromNewShoppingList(result);
+
+        return this.rcbShoppingListRepository.save(result);
+    }
+
+    public ShoppingList mergeIngredientOrdersOfTwoShoppingLists(ShoppingList existingShoppingList, ShoppingList newShoppingList) {
+        List<IngredientOrder> newIngredientOrders = new ArrayList<>(newShoppingList.getIngredientOrders());
+
+        List<IngredientOrder> existingIngredientOrders = new ArrayList<>(existingShoppingList.getIngredientOrders());
+
+        for (IngredientOrder iOrder : newIngredientOrders) {
+            int index = getIndexIngredientOrderInShoppingList(iOrder, existingShoppingList);
             
             if (index != -1) {
-                IngredientOrder ingredientToUpdate  = existingIngredients.get(index) ;
-                Long initialAmount = ingredientToUpdate.getAmountOrder();
-                Long amountToAdd = i.getAmountOrder();
-                existingIngredients.get(index).setAmountOrder(initialAmount + amountToAdd);
+                IngredientOrder ingredientOrderToUpdate  = existingIngredientOrders.get(index) ;
+                Long initialAmount = ingredientOrderToUpdate.getAmountOrder();
+                Long amountToAdd = iOrder.getAmountOrder();
+                Long totalAmountOrder = initialAmount + amountToAdd;
+                
+                existingIngredientOrders.get(index).setAmountOrder(totalAmountOrder);
+                   
             } else {
-                existingIngredients.add(i);
+                existingIngredientOrders.add(iOrder);
             }
         } 
 
         
-        existingShoppingList.setIngredientOrders( new HashSet<>(existingIngredients));
+        existingShoppingList.setIngredientOrders( new HashSet<>(existingIngredientOrders));
          return existingShoppingList;
 
     }

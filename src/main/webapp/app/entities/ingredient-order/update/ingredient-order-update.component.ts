@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
@@ -9,8 +9,6 @@ import { IIngredientOrder, IngredientOrder } from '../ingredient-order.model';
 import { IngredientOrderService } from '../service/ingredient-order.service';
 import { IIngredient } from 'app/entities/ingredient/ingredient.model';
 import { IngredientService } from 'app/entities/ingredient/service/ingredient.service';
-import { IShoppingList } from 'app/entities/shopping-list/shopping-list.model';
-import { ShoppingListService } from 'app/entities/shopping-list/service/shopping-list.service';
 
 @Component({
   selector: 'jhi-ingredient-order-update',
@@ -20,19 +18,16 @@ export class IngredientOrderUpdateComponent implements OnInit {
   isSaving = false;
 
   ingredientsSharedCollection: IIngredient[] = [];
-  shoppingListsSharedCollection: IShoppingList[] = [];
 
   editForm = this.fb.group({
     id: [],
-    amountOrder: [],
+    amountOrder: [null, [Validators.required]],
     ingredient: [],
-    shoppingList: [],
   });
 
   constructor(
     protected ingredientOrderService: IngredientOrderService,
     protected ingredientService: IngredientService,
-    protected shoppingListService: ShoppingListService,
     protected activatedRoute: ActivatedRoute,
     protected fb: FormBuilder
   ) {}
@@ -63,10 +58,6 @@ export class IngredientOrderUpdateComponent implements OnInit {
     return item.id!;
   }
 
-  trackShoppingListById(index: number, item: IShoppingList): number {
-    return item.id!;
-  }
-
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IIngredientOrder>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
       next: () => this.onSaveSuccess(),
@@ -91,16 +82,11 @@ export class IngredientOrderUpdateComponent implements OnInit {
       id: ingredientOrder.id,
       amountOrder: ingredientOrder.amountOrder,
       ingredient: ingredientOrder.ingredient,
-      shoppingList: ingredientOrder.shoppingList,
     });
 
     this.ingredientsSharedCollection = this.ingredientService.addIngredientToCollectionIfMissing(
       this.ingredientsSharedCollection,
       ingredientOrder.ingredient
-    );
-    this.shoppingListsSharedCollection = this.shoppingListService.addShoppingListToCollectionIfMissing(
-      this.shoppingListsSharedCollection,
-      ingredientOrder.shoppingList
     );
   }
 
@@ -114,16 +100,6 @@ export class IngredientOrderUpdateComponent implements OnInit {
         )
       )
       .subscribe((ingredients: IIngredient[]) => (this.ingredientsSharedCollection = ingredients));
-
-    this.shoppingListService
-      .query()
-      .pipe(map((res: HttpResponse<IShoppingList[]>) => res.body ?? []))
-      .pipe(
-        map((shoppingLists: IShoppingList[]) =>
-          this.shoppingListService.addShoppingListToCollectionIfMissing(shoppingLists, this.editForm.get('shoppingList')!.value)
-        )
-      )
-      .subscribe((shoppingLists: IShoppingList[]) => (this.shoppingListsSharedCollection = shoppingLists));
   }
 
   protected createFromForm(): IIngredientOrder {
@@ -132,7 +108,6 @@ export class IngredientOrderUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       amountOrder: this.editForm.get(['amountOrder'])!.value,
       ingredient: this.editForm.get(['ingredient'])!.value,
-      shoppingList: this.editForm.get(['shoppingList'])!.value,
     };
   }
 }

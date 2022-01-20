@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +54,7 @@ public class IngredientResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/ingredients")
-    public ResponseEntity<Ingredient> createIngredient(@RequestBody Ingredient ingredient) throws URISyntaxException {
+    public ResponseEntity<Ingredient> createIngredient(@Valid @RequestBody Ingredient ingredient) throws URISyntaxException {
         log.debug("REST request to save Ingredient : {}", ingredient);
         if (ingredient.getId() != null) {
             throw new BadRequestAlertException("A new ingredient cannot already have an ID", ENTITY_NAME, "idexists");
@@ -77,7 +79,7 @@ public class IngredientResource {
     @PutMapping("/ingredients/{id}")
     public ResponseEntity<Ingredient> updateIngredient(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Ingredient ingredient
+        @Valid @RequestBody Ingredient ingredient
     ) throws URISyntaxException {
         log.debug("REST request to update Ingredient : {}, {}", id, ingredient);
         if (ingredient.getId() == null) {
@@ -112,7 +114,7 @@ public class IngredientResource {
     @PatchMapping(value = "/ingredients/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Ingredient> partialUpdateIngredient(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Ingredient ingredient
+        @NotNull @RequestBody Ingredient ingredient
     ) throws URISyntaxException {
         log.debug("REST request to partial update Ingredient partially : {}, {}", id, ingredient);
         if (ingredient.getId() == null) {
