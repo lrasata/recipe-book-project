@@ -142,7 +142,7 @@ public class RcbShoppingListResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        if (shoppingList.getIngredients().isEmpty()) {
+        if (shoppingList.getIngredientOrders().isEmpty()) {
             throw new BadRequestAlertException("ShoppingList Must contain List of Ingredients", ENTITY_NAME, "emptyIngredients");
         }
 

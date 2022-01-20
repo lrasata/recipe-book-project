@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.project.recipebook.domain.Ingredient;
+import com.project.recipebook.domain.IngredientOrder;
 import com.project.recipebook.domain.ShoppingList;
 import com.project.recipebook.domain.enumeration.ShoppingStatus;
 import com.project.recipebook.repository.recipebook.RcbShoppingListRepository;
@@ -44,42 +45,42 @@ public class RcbShoppingListService {
         } else if (existingShoppingListByUser.size() > 1) {
             throw new TooManyShoppingListDraftException();
         } else {
-            ShoppingList newShoppingList = merge2ShoppingListAndIncrementIngredients(existingShoppingListByUser.get(0), shoppingList);
+            ShoppingList newShoppingList = merge2ShoppingListAndIncrementIngredientOrders(existingShoppingListByUser.get(0), shoppingList);
             newShoppingList.setShoppingStatus(ShoppingStatus.DRAFT);
             return this.rcbShoppingListRepository.save(newShoppingList);
         }
 
     }
 
-    public ShoppingList merge2ShoppingListAndIncrementIngredients(ShoppingList existingShoppingList, ShoppingList newShoppingList) {
+    public ShoppingList merge2ShoppingListAndIncrementIngredientOrders(ShoppingList existingShoppingList, ShoppingList newShoppingList) {
 
-        Set<Ingredient> newhashSet = newShoppingList.getIngredients();
-        List<Ingredient> newIngredients = new ArrayList<>(newhashSet);
+        Set<IngredientOrder> newhashSet = newShoppingList.getIngredientOrders();
+        List<IngredientOrder> newIngredients = new ArrayList<>(newhashSet);
 
-        Set<Ingredient> hashSet = existingShoppingList.getIngredients();
-        List<Ingredient> existingIngredients = new ArrayList<>(hashSet);
+        Set<IngredientOrder> hashSet = existingShoppingList.getIngredientOrders();
+        List<IngredientOrder> existingIngredients = new ArrayList<>(hashSet);
 
-        for (Ingredient i : newIngredients) {
-            int index = getIndexIngredientInShoppingList(i, existingShoppingList);
+        for (IngredientOrder i : newIngredients) {
+            int index = getIndexIngredientOrderInShoppingList(i, existingShoppingList);
             
             if (index != -1) {
-                Ingredient ingredientToUpdate  = existingIngredients.get(index) ;
-                Long initialAmount = ingredientToUpdate.getAmount();
-                Long amountToAdd = i.getAmount();
-                existingIngredients.get(index).setAmount(initialAmount + amountToAdd);
+                IngredientOrder ingredientToUpdate  = existingIngredients.get(index) ;
+                Long initialAmount = ingredientToUpdate.getAmountOrder();
+                Long amountToAdd = i.getAmountOrder();
+                existingIngredients.get(index).setAmountOrder(initialAmount + amountToAdd);
             } else {
                 existingIngredients.add(i);
             }
         } 
 
         
-        existingShoppingList.setIngredients( new HashSet<>(existingIngredients));
+        existingShoppingList.setIngredientOrders( new HashSet<>(existingIngredients));
          return existingShoppingList;
 
     }
 
-    public int getIndexIngredientInShoppingList(Ingredient i, ShoppingList shoppingList) {
-        List<Ingredient> existingIngredients = new ArrayList<>(shoppingList.getIngredients());
+    public int getIndexIngredientOrderInShoppingList(IngredientOrder i, ShoppingList shoppingList) {
+        List<IngredientOrder> existingIngredients = new ArrayList<>(shoppingList.getIngredientOrders());
         
         for(int index = 0; index < existingIngredients.size(); index++) {
             if (i.getId().equals(existingIngredients.get(index).getId())) {

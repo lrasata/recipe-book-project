@@ -33,8 +33,8 @@ import { HomeService } from "../home.service";
         const shoppingList = new ShoppingList();
         shoppingList.user = new User(this.user.id, this.user.login);
         shoppingList.shoppingStatus = ShoppingStatus.DRAFT;
-        shoppingList.ingredients = this.recipe.ingredients?.slice();
-        this.subscribeToSaveResponse(this.homeService.addIngredientToMyShoppingList(shoppingList));
+        //TODO shoppingList.ingredientOrders = this.recipe.ingredients?.slice();
+        //TODO this.subscribeToSaveResponse(this.homeService.addIngredientToMyShoppingList(shoppingList));
     }
 
     protected subscribeToSaveResponse(result: Observable<HttpResponse<IShoppingList>>): void {

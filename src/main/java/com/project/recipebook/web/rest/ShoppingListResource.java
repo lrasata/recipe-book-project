@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -148,21 +149,12 @@ public class ShoppingListResource {
      * {@code GET  /shopping-lists} : get all the shoppingLists.
      *
      * @param pageable the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of shoppingLists in body.
      */
     @GetMapping("/shopping-lists")
-    public ResponseEntity<List<ShoppingList>> getAllShoppingLists(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
-    ) {
+    public ResponseEntity<List<ShoppingList>> getAllShoppingLists(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of ShoppingLists");
-        Page<ShoppingList> page;
-        if (eagerload) {
-            page = shoppingListRepository.findAllWithEagerRelationships(pageable);
-        } else {
-            page = shoppingListRepository.findAll(pageable);
-        }
+        Page<ShoppingList> page = shoppingListRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -176,7 +168,7 @@ public class ShoppingListResource {
     @GetMapping("/shopping-lists/{id}")
     public ResponseEntity<ShoppingList> getShoppingList(@PathVariable Long id) {
         log.debug("REST request to get ShoppingList : {}", id);
-        Optional<ShoppingList> shoppingList = shoppingListRepository.findOneWithEagerRelationships(id);
+        Optional<ShoppingList> shoppingList = shoppingListRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(shoppingList);
     }
 

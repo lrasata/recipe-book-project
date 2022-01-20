@@ -19,15 +19,5 @@
                   <column name="recipe_id" type="numeric"/>
         </loadData>
     </changeSet>
-    <changeSet id="20220112210945" author="lrasata">
-        <loadData
-                  file="config/liquibase/fake-data/rel_shopping_list__ingredient.csv"
-                  separator=";"
-                  tableName="rel_shopping_list__ingredient"
-                  usePreparedStatements="true">
-                  <column name="ingredient_id" type="numeric"/>
-                  <column name="shopping_list_id" type="numeric"/>
-        </loadData>
-    </changeSet>
 
 </databaseChangeLog>

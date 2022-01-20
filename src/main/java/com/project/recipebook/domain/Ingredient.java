@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 import javax.persistence.*;
 
 /**
@@ -32,10 +34,6 @@ public class Ingredient implements Serializable {
     @ManyToMany(mappedBy = "ingredients")
     @JsonIgnoreProperties(value = { "user", "ingredients" }, allowSetters = true)
     private Set<Recipe> recipes = new HashSet<>();
-
-    @ManyToMany(mappedBy = "ingredients")
-    @JsonIgnoreProperties(value = { "user", "ingredients" }, allowSetters = true)
-    private Set<ShoppingList> shoppingLists = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -106,37 +104,6 @@ public class Ingredient implements Serializable {
     public Ingredient removeRecipe(Recipe recipe) {
         this.recipes.remove(recipe);
         recipe.getIngredients().remove(this);
-        return this;
-    }
-
-    public Set<ShoppingList> getShoppingLists() {
-        return this.shoppingLists;
-    }
-
-    public void setShoppingLists(Set<ShoppingList> shoppingLists) {
-        if (this.shoppingLists != null) {
-            this.shoppingLists.forEach(i -> i.removeIngredient(this));
-        }
-        if (shoppingLists != null) {
-            shoppingLists.forEach(i -> i.addIngredient(this));
-        }
-        this.shoppingLists = shoppingLists;
-    }
-
-    public Ingredient shoppingLists(Set<ShoppingList> shoppingLists) {
-        this.setShoppingLists(shoppingLists);
-        return this;
-    }
-
-    public Ingredient addShoppingList(ShoppingList shoppingList) {
-        this.shoppingLists.add(shoppingList);
-        shoppingList.getIngredients().add(this);
-        return this;
-    }
-
-    public Ingredient removeShoppingList(ShoppingList shoppingList) {
-        this.shoppingLists.remove(shoppingList);
-        shoppingList.getIngredients().remove(this);
         return this;
     }
 

@@ -14,28 +14,14 @@
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="shopping_status" type="varchar(255)" defaultValue="DRAFT">
-                <constraints nullable="false"/>
+            <column name="shopping_status" type="varchar(255)">
+                <constraints nullable="false" />
             </column>
-            <column name="user_id" type="bigint" defaultValue="2" >
-                <constraints nullable="false" unique="false" uniqueConstraintName="ux_shopping_list__user_id" />
+            <column name="user_id" type="bigint">
+                <constraints nullable="true" unique="true" uniqueConstraintName="ux_shopping_list__user_id" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-    </changeSet>
-
-    <changeSet id="20220110063113-1-relations" author="jhipster">
-
-        <createTable tableName="rel_shopping_list__ingredient">
-            <column name="ingredient_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="shopping_list_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="shopping_list_id, ingredient_id" tableName="rel_shopping_list__ingredient"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -55,8 +41,7 @@
                   tableName="shopping_list"
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
-            <column name="user_id" type="numeric" defaultValue="2"/>
-            <column name="shopping_status" type="string" defaultValue="DRAFT"/>
+            <column name="shopping_status" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

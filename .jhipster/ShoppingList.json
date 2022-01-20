@@ -17,11 +17,10 @@
       "ownerSide": true
     },
     {
-      "relationshipType": "many-to-many",
-      "otherEntityName": "ingredient",
+      "relationshipType": "one-to-many",
+      "otherEntityName": "ingredientOrder",
       "otherEntityRelationshipName": "shoppingList",
-      "relationshipName": "ingredient",
-      "ownerSide": true
+      "relationshipName": "ingredientOrder"
     }
   ],
   "javadoc": "ShoppingList Entity",

@@ -8,10 +8,11 @@ import { finalize, map } from 'rxjs/operators';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
 import { IIngredient } from 'app/entities/ingredient/ingredient.model';
-import { IngredientService } from 'app/entities/ingredient/service/ingredient.service';
 import { ShoppingStatus } from 'app/entities/enumerations/shopping-status.model';
 import { IShoppingList, ShoppingList } from 'app/entities/shopping-list/shopping-list.model';
 import { MyShoppingListService } from '../my-shopping-list.service';
+import { IIngredientOrder } from 'app/entities/ingredient-order/ingredient-order.model';
+import { IngredientOrderService } from 'app/entities/ingredient-order/service/ingredient-order.service';
 
 @Component({
   selector: 'jhi-my-shopping-list-update',
@@ -29,22 +30,22 @@ export class MyShoppingListUpdateComponent implements OnInit {
     id: [],
     shoppingStatus: [null, [Validators.required]],
     user: [],
-    ingredients: [],
+    ingredientOrders: [],
   });
 
   constructor(
     protected shoppingListService: MyShoppingListService,
     protected userService: UserService,
-    protected ingredientService: IngredientService,
+    protected ingredientOrderService: IngredientOrderService,
     protected activatedRoute: ActivatedRoute,
     protected fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ shoppingList }) => {
-      this.updateForm(shoppingList);
+      // this.updateForm(shoppingList);
       this.initialShoppingList = shoppingList;
-      this.loadRelationshipsOptions();
+      // this.loadRelationshipsOptions();
     });
   }
   
@@ -68,11 +69,11 @@ export class MyShoppingListUpdateComponent implements OnInit {
     return item.id!;
   }
 
-  trackIngredientById(index: number, item: IIngredient): number {
+  trackIngredientById(index: number, item: IIngredientOrder): number {
     return item.id!;
   }
 
-  getSelectedIngredient(option: IIngredient, selectedVals?: IIngredient[]): IIngredient {
+  getSelectedIngredient(option: IIngredientOrder, selectedVals?: IIngredientOrder[]): IIngredientOrder {
     if (selectedVals) {
       for (const selectedVal of selectedVals) {
         if (option.id === selectedVal.id) {
@@ -102,32 +103,32 @@ export class MyShoppingListUpdateComponent implements OnInit {
     this.isSaving = false;
   }
 
-  protected loadRelationshipsOptions(): void {
+  // protected loadRelationshipsOptions(): void {
 
-    this.ingredientService
-      .query()
-      .pipe(map((res: HttpResponse<IIngredient[]>) => res.body ?? []))
-      .pipe(
-        map((ingredients: IIngredient[]) =>
-          this.ingredientService.addIngredientToCollectionIfMissing(ingredients, ...(this.editForm.get('ingredients')!.value ?? []))
-        )
-      )
-      .subscribe((ingredients: IIngredient[]) => (this.ingredientsSharedCollection = ingredients));
-  }
+  //   this.ingredientOrderService
+  //     .query()
+  //     .pipe(map((res: HttpResponse<IIngredientOrder[]>) => res.body ?? []))
+  //     .pipe(
+  //       map((ingredients: IIngredientOrder[]) =>
+  //         this.ingredientOrderService.addIngredientToCollectionIfMissing(ingredients, ...(this.editForm.get('ingredientOrders')!.value ?? []))
+  //       )
+  //     )
+  //     .subscribe((ingredients: IIngredientOrder[]) => (this.ingredientsSharedCollection = ingredients));
+  // }
 
-  protected updateForm(shoppingList: IShoppingList): void {
-    this.editForm.patchValue({
-      id: shoppingList.id,
-      shoppingStatus: shoppingList.shoppingStatus,
-      user: shoppingList.user,
-      ingredients: shoppingList.ingredients,
-    });
+  // protected updateForm(shoppingList: IShoppingList): void {
+  //   this.editForm.patchValue({
+  //     id: shoppingList.id,
+  //     shoppingStatus: shoppingList.shoppingStatus,
+  //     user: shoppingList.user,
+  //     ingredients: shoppingList.ingredientOrders,
+  //   });
 
-    this.ingredientsSharedCollection = this.ingredientService.addIngredientToCollectionIfMissing(
-      this.ingredientsSharedCollection,
-      ...(shoppingList.ingredients ?? [])
-    );
-  }
+  //   this.ingredientsSharedCollection = this.ingredientOrderService.addIngredientToCollectionIfMissing(
+  //     this.ingredientsSharedCollection,
+  //     ...(shoppingList.ingredientOrders ?? [])
+  //   );
+  // }
 
 
   protected createFromForm(): IShoppingList {
@@ -136,7 +137,7 @@ export class MyShoppingListUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       shoppingStatus: this.editForm.get(['shoppingStatus'])!.value,
       user: this.editForm.get(['user'])!.value,
-      ingredients: this.editForm.get(['ingredients'])!.value,
+      ingredientOrders: this.editForm.get(['ingredientOrders'])!.value,
     };
   }
 }

@@ -3,7 +3,7 @@
  * @author lrasata.
  */
 entity Recipe {
-	title String,
+	title String required,
 	description String,
     imagePath String
 }
@@ -12,8 +12,15 @@ entity Recipe {
  * Ingredient Entity 
  */
 entity Ingredient {
-	name String,
-	amount Long
+	name String required,
+	amount Long required
+}
+
+/**
+ * Ingredient Order Entity 
+ */
+entity IngredientOrder {
+	amountOrder Long required
 }
 
 /**
@@ -33,11 +40,18 @@ relationship OneToOne {
 }
 
 relationship ManyToMany {
-	Recipe{ingredient} to Ingredient{recipe},
-    ShoppingList{ingredient} to Ingredient{shoppingList}
+	Recipe{ingredient} to Ingredient{recipe}
+}
+
+relationship ManyToOne{
+	IngredientOrder{ingredient} to Ingredient
+}
+
+relationship OneToMany{
+	ShoppingList{IngredientOrder} to IngredientOrder
 }
 
 
 // Set pagination options
-paginate Recipe, Ingredient, ShoppingList with infinite-scroll
+paginate Recipe, Ingredient, IngredientOrder, ShoppingList with infinite-scroll
 

@@ -20,7 +20,7 @@
       "id": "ID",
       "shoppingStatus": "Shopping Status",
       "user": "User",
-      "ingredient": "Ingredient"
+      "ingredientOrder": "Ingredient Order"
     }
   }
 }

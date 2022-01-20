@@ -1,0 +1,34 @@
+{
+  "name": "IngredientOrder",
+  "fields": [
+    {
+      "fieldName": "amountOrder",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "ingredient",
+      "otherEntityRelationshipName": "ingredientOrder",
+      "relationshipName": "ingredient"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "shoppingList",
+      "otherEntityRelationshipName": "ingredientOrder",
+      "relationshipName": "shoppingList"
+    }
+  ],
+  "javadoc": "Ingredient Order Entity",
+  "entityTableName": "ingredient_order",
+  "dto": "no",
+  "pagination": "infinite-scroll",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20220120035817"
+}

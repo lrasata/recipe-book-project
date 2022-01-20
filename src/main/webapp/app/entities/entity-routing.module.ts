@@ -19,6 +19,11 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'recipebookApp.shoppingList.home.title' },
         loadChildren: () => import('./shopping-list/shopping-list.module').then(m => m.ShoppingListModule),
       },
+      {
+        path: 'ingredient-order',
+        data: { pageTitle: 'recipebookApp.ingredientOrder.home.title' },
+        loadChildren: () => import('./ingredient-order/ingredient-order.module').then(m => m.IngredientOrderModule),
+      },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],

@@ -43,7 +43,7 @@
     "clientPackageManager": "npm",
     "languages": ["en", "fr"],
     "enableGradleEnterprise": false,
-    "entities": ["Recipe", "Ingredient", "ShoppingList"],
-    "lastLiquibaseTimestamp": 1641796273000
+    "entities": ["Recipe", "Ingredient", "ShoppingList", "IngredientOrder"],
+    "lastLiquibaseTimestamp": 1642651097000
   }
 }

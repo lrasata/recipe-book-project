@@ -1,0 +1,26 @@
+{
+  "recipebookApp": {
+    "ingredientOrder": {
+      "home": {
+        "title": "IngredientOrders",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Ingredient Order",
+        "createOrEditLabel": "Créer ou éditer un Ingredient Order",
+        "notFound": "Aucun Ingredient Order trouvé"
+      },
+      "created": "Un nouveau Ingredient Order a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Ingredient Order avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Ingredient Order avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Ingredient Order {{ id }} ?"
+      },
+      "detail": {
+        "title": "Ingredient Order"
+      },
+      "id": "ID",
+      "amountOrder": "Amount Order",
+      "ingredient": "Ingredient",
+      "shoppingList": "Shopping List"
+    }
+  }
+}

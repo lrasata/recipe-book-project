@@ -17,13 +17,6 @@
       "otherEntityRelationshipName": "ingredient",
       "relationshipName": "recipe",
       "ownerSide": false
-    },
-    {
-      "relationshipType": "many-to-many",
-      "otherEntityName": "shoppingList",
-      "otherEntityRelationshipName": "ingredient",
-      "relationshipName": "shoppingList",
-      "ownerSide": false
     }
   ],
   "javadoc": "Ingredient Entity",

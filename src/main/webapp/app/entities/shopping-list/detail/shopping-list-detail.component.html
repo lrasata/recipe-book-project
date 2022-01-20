@@ -22,13 +22,6 @@
         <dd>
           <span>{{ shoppingList.user?.id }}</span>
         </dd>
-        <dt><span jhiTranslate="recipebookApp.shoppingList.ingredient">Ingredient</span></dt>
-        <dd>
-          <span *ngFor="let ingredient of shoppingList.ingredients; let last = last">
-            <a [routerLink]="['/ingredient', ingredient?.id, 'view']">{{ ingredient.id }}</a
-            >{{ last ? '' : ', ' }}
-          </span>
-        </dd>
       </dl>
 
       <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

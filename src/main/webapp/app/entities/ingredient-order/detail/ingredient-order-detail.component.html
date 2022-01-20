@@ -1,0 +1,46 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="ingredientOrder">
+      <h2 data-cy="ingredientOrderDetailsHeading">
+        <span jhiTranslate="recipebookApp.ingredientOrder.detail.title">Ingredient Order</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ ingredientOrder.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="recipebookApp.ingredientOrder.amountOrder">Amount Order</span></dt>
+        <dd>
+          <span>{{ ingredientOrder.amountOrder }}</span>
+        </dd>
+        <dt><span jhiTranslate="recipebookApp.ingredientOrder.ingredient">Ingredient</span></dt>
+        <dd>
+          <div *ngIf="ingredientOrder.ingredient">
+            <a [routerLink]="['/ingredient', ingredientOrder.ingredient?.id, 'view']">{{ ingredientOrder.ingredient?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="recipebookApp.ingredientOrder.shoppingList">Shopping List</span></dt>
+        <dd>
+          <div *ngIf="ingredientOrder.shoppingList">
+            <a [routerLink]="['/shopping-list', ingredientOrder.shoppingList?.id, 'view']">{{ ingredientOrder.shoppingList?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/ingredient-order', ingredientOrder.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>
