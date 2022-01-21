@@ -105,12 +105,12 @@ public class RcbShoppingListService {
             int index = getIndexOfIOrderWithIngredientAlreadyExistsInShoppingList(iOrder, existingShoppingList);
 
             if (index != -1) {
-                IngredientOrder ingredientOrderToUpdate  = existingIngredientOrders.get(index) ;
-                Long initialAmount = ingredientOrderToUpdate.getAmountOrder();
-                Long amountToAdd = iOrder.getAmountOrder();
-                Long totalAmountOrder = initialAmount + amountToAdd;
+                // IngredientOrder ingredientOrderToUpdate  = existingIngredientOrders.get(index) ;
+                // Long initialAmount = ingredientOrderToUpdate.getAmountOrder();
+                // Long amountToAdd = iOrder.getAmountOrder();
+                // Long totalAmountOrder = initialAmount + amountToAdd;
                     
-                existingIngredientOrders.get(index).setAmountOrder(totalAmountOrder);
+                existingIngredientOrders.get(index).setAmountOrder(iOrder.getAmountOrder());
             } else {
                     existingIngredientOrders.add(iOrder);
             }

@@ -12,7 +12,16 @@
           <jhi-alert-error></jhi-alert-error>
           <div>
             <strong>Status : </strong> {{initialShoppingList.shoppingStatus}} 
-        </div>
+          </div>
+          <div>
+            <button
+            type="button"
+            class="btn btn-info btn-sm"
+            (click)="changeAmount()"
+            >
+            <span class="d-none d-md-inline">Change amount</span>
+            </button>
+          </div>
 
         
         <div class="table-responsive tabl" id="entities" style="margin-top: 20px;"
@@ -26,7 +35,6 @@
                     <th>
                       <span>Amount</span>
                     </th>
-                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -35,24 +43,24 @@
                         <span>{{ingredientOrder.ingredient?.name}}</span>
                     </td>
                     <td>
-                      <span>{{ingredientOrder.amountOrder}}</span>
+                      <span *ngIf="!isAmountOnChange">{{ingredientOrder.amountOrder}}</span>
+                      <span *ngIf="isAmountOnChange">
+                        <input
+                        [(ngModel)] = ingredientOrder.amountOrder
+                        [ngModelOptions]="{standalone: true}"
+                        type="number"
+                        class="form-control"
+                      />
+                      </span>
                     </td>
-                    <td class="text-right">
-                        <button
-                        type="button"
-                        class="btn btn-info btn-sm"
-                        [disabled]="true"
-                        >
-                        <span class="d-none d-md-inline">Change amount</span>
-                      </button>
-                    </td>
+
                   </tr>
                 </tbody>
               </table>
         </div>
-        <button id="modify-ingredient" type="button" class="btn btn-info" (click)="onClickIngredientAddOrRemove()">Add or remove ingredients</button>
+        <button id="modify-ingredient" type="button" class="btn btn-info" (click)="onClickIngredientAddOrRemove()">Add ingredients</button>
       
-        <span *ngIf="isIngredientAddOrRemoveClicked">
+        <!-- <span *ngIf="isIngredientAddOrRemoveClicked">
             <div class="form-group" style="margin-top: 20px;">
                 <label jhiTranslate="recipebookApp.shoppingList.ingredient" for="field_ingredients">Ingredient</label>
                 <select
@@ -72,24 +80,21 @@
                 </select>
               </div>
             
-        </span>
+        </span> -->
     </div>
-  
-
   
         <div style="margin-top: 20px;">
           <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-            <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+            <span jhiTranslate="entity.action.cancel">Cancel</span>
           </button>
   
           <button
-            type="submit"
+            type="button"
             id="save-entity"
-            data-cy="entityCreateSaveButton"
-            [disabled]="editForm.invalid || isSaving"
             class="btn btn-primary"
+            (click)="save()"
           >
-            <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          <span jhiTranslate="entity.action.save">Save</span>
           </button>
         </div>
       </form>
