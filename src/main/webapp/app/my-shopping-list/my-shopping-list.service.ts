@@ -21,7 +21,7 @@ export class MyShoppingListService {
     }
 
     order(shoppingList: IShoppingList): Observable<EntityResponseType> {
-        return this.http.put<IShoppingList>(`${this.resourceUrl}/shopping-lists/${getShoppingListIdentifier(shoppingList) as number}/order`, shoppingList, {
+        return this.http.put<HttpResponse<IShoppingList>>(`${this.resourceUrl}/shopping-lists/${getShoppingListIdentifier(shoppingList) as number}/order`, {
           observe: 'response',
         });
       }

@@ -87,15 +87,12 @@ public class RcbShoppingListService {
         return this.rcbShoppingListRepository.save(result);
     }
 
-    public ShoppingList order(ShoppingList newShoppingList) {
-        ShoppingList existingShoppingList = this.rcbShoppingListRepository.findOneWithEagerRelationships(newShoppingList.getId()).get();
+    public ShoppingList order(Long newShoppingListId) {
+        ShoppingList existShoppingList = this.rcbShoppingListRepository.findById(newShoppingListId).get();
 
-        ShoppingList result = mergeIngredientOrdersOfTwoShoppingLists(existingShoppingList, newShoppingList);
+        existShoppingList.setShoppingStatus(ShoppingStatus.ORDERED);
 
-        result.setShoppingStatus(ShoppingStatus.ORDERED);
-        this.saveIngredientOrdersFromNewShoppingList(result);
-
-        return this.rcbShoppingListRepository.save(result);
+        return this.rcbShoppingListRepository.save(existShoppingList);
     }
 
     public ShoppingList mergeIngredientOrdersOfTwoShoppingLists(ShoppingList existingShoppingList, ShoppingList newShoppingList) {

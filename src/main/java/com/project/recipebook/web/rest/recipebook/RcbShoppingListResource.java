@@ -122,29 +122,18 @@ public class RcbShoppingListResource {
      */
     @PutMapping("/shopping-lists/{id}/order")
     public ResponseEntity<ShoppingList> orderShoppingList(
-        @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody ShoppingList shoppingList
+        @PathVariable(value = "id", required = true) final Long id
     ) throws URISyntaxException {
-        log.debug("REST request to update ShoppingList : {}, {}", id, shoppingList);
-        if (shoppingList.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, shoppingList.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
+        log.debug("REST request to order ShoppingList with : {}", id);
 
         if (!shoppingListRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        if (shoppingList.getIngredientOrders().isEmpty()) {
-            throw new BadRequestAlertException("ShoppingList Must contain List of Ingredients", ENTITY_NAME, "emptyIngredients");
-        }
-
-        ShoppingList result = rcbShoppingListService.order(shoppingList);
+        ShoppingList result = rcbShoppingListService.order(id);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, shoppingList.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
     
