@@ -184,20 +184,10 @@ public class RcbShoppingListResource {
         @PathVariable("userLogin") String userLogin,
         @PathVariable("status") ShoppingStatus status) {
         log.debug("REST request to get a list of Shopping List by UserLogin by status : "+ status.name());
-        
-        List<ShoppingList> shoppingLists = new ArrayList<ShoppingList>();
-        switch(status.name()) {
-            case "DRAFT":
-                shoppingLists= this.shoppingListRepository.findAllWithEagerRelationshipsDraftByUserLogin(userLogin);
-                return ResponseEntity.ok().body(shoppingLists);
-            case "ORDERED":
-                shoppingLists= this.shoppingListRepository.findAllWithEagerRelationshipsOrderedByUserLogin(userLogin);
-                return ResponseEntity.ok().body(shoppingLists);
-            default:
-            return ResponseEntity.ok().body(shoppingLists);
-
-        }
-
+    
+        return ResponseEntity.ok().body(
+            this.rcbShoppingListService.findAllByUserAndShoppingStatus(userLogin, status)
+            );
         
     }
     

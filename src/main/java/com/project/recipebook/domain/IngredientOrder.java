@@ -28,6 +28,7 @@ public class IngredientOrder implements Serializable {
     @Column(name = "amount_order", nullable = false)
     private Long amountOrder;
 
+    @NotNull
     @ManyToOne
     @JsonIgnoreProperties(value = { "recipes" }, allowSetters = true)
     private Ingredient ingredient;

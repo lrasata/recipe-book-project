@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface RcbShoppingListRepository extends ShoppingListRepository {
 
     @Query("select distinct shoppingList " + 
-    "from ShoppingList shoppingList left join fetch shoppingList.ingredientOrders " + 
+    "from ShoppingList shoppingList left join fetch shoppingList.ingredientOrders " +
     "where shoppingList.user.login =:userLogin")
     List<ShoppingList> findAllWithEagerRelationshipsByUserLogin(@Param("userLogin") String userLogin );
 

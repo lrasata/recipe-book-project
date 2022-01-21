@@ -3,15 +3,17 @@ package com.project.recipebook.service.recipebook;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.project.recipebook.domain.Ingredient;
 import com.project.recipebook.domain.IngredientOrder;
 import com.project.recipebook.domain.ShoppingList;
 import com.project.recipebook.domain.enumeration.ShoppingStatus;
 import com.project.recipebook.repository.IngredientOrderRepository;
-import com.project.recipebook.repository.IngredientRepository;
+import com.project.recipebook.repository.recipebook.RcbIngredientOrderRepository;
 import com.project.recipebook.repository.recipebook.RcbShoppingListRepository;
 import com.project.recipebook.service.recipebook.error.TooManyShoppingListDraftException;
 
@@ -28,19 +30,15 @@ public class RcbShoppingListService {
 
     private final RcbShoppingListRepository rcbShoppingListRepository;
 
-    private final IngredientRepository ingredientRepository;
-
-    private final IngredientOrderRepository ingredientOrderRepository;
+    private final RcbIngredientOrderRepository ingredientOrderRepository;
 
     private static final String ENTITY_NAME = "rcbshoppinglist";
     
     public RcbShoppingListService(
         RcbShoppingListRepository rcbShoppingListRepository,
-        IngredientRepository ingredientRepository,
-        IngredientOrderRepository ingredientOrderRepository
+        RcbIngredientOrderRepository ingredientOrderRepository
     ){
         this.rcbShoppingListRepository = rcbShoppingListRepository;
-        this.ingredientRepository = ingredientRepository;
         this.ingredientOrderRepository = ingredientOrderRepository;
     }
 
@@ -148,6 +146,22 @@ public class RcbShoppingListService {
         } else {
             return ShoppingStatus.DRAFT;
         }
+    }
+
+    public List<ShoppingList> findAllByUserAndShoppingStatus(String userLogin, ShoppingStatus shoppingStatus) {
+        List<ShoppingList> list = new ArrayList<ShoppingList>();
+        switch(shoppingStatus.name()) {
+            case "DRAFT":
+                list = this.rcbShoppingListRepository.findAllWithEagerRelationshipsDraftByUserLogin(
+                    userLogin);
+                break;
+            case "ORDERED":
+                list = this.rcbShoppingListRepository.findAllWithEagerRelationshipsOrderedByUserLogin(
+                    userLogin);
+                break;
+        }
+
+        return list;
     }
     
 }

@@ -48,7 +48,9 @@ import { HomeService } from "../home.service";
 
           iOrder.amountOrder = i.amount;
           ingredientOrders.push(iOrder);
+          
         }
+        shoppingList.ingredientOrders = ingredientOrders;
         this.subscribeToSaveResponse(this.homeService.addIngredientToMyShoppingList(shoppingList));
     }
 
