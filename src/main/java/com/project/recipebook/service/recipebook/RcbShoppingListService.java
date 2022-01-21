@@ -88,7 +88,7 @@ public class RcbShoppingListService {
     }
 
     public ShoppingList order(ShoppingList newShoppingList) {
-        ShoppingList existingShoppingList = this.rcbShoppingListRepository.findById(newShoppingList.getId()).get();
+        ShoppingList existingShoppingList = this.rcbShoppingListRepository.findOneWithEagerRelationships(newShoppingList.getId()).get();
 
         ShoppingList result = mergeIngredientOrdersOfTwoShoppingLists(existingShoppingList, newShoppingList);
 
@@ -100,23 +100,24 @@ public class RcbShoppingListService {
 
     public ShoppingList mergeIngredientOrdersOfTwoShoppingLists(ShoppingList existingShoppingList, ShoppingList newShoppingList) {
         List<IngredientOrder> newIngredientOrders = new ArrayList<>(newShoppingList.getIngredientOrders());
-
         List<IngredientOrder> existingIngredientOrders = new ArrayList<>(existingShoppingList.getIngredientOrders());
 
         for (IngredientOrder iOrder : newIngredientOrders) {
-            int index = getIndexIngredientOrderInShoppingList(iOrder, existingShoppingList);
             
+            
+            int index = getIndexOfIOrderWithIngredientAlreadyExistsInShoppingList(iOrder, existingShoppingList);
+
             if (index != -1) {
                 IngredientOrder ingredientOrderToUpdate  = existingIngredientOrders.get(index) ;
                 Long initialAmount = ingredientOrderToUpdate.getAmountOrder();
                 Long amountToAdd = iOrder.getAmountOrder();
                 Long totalAmountOrder = initialAmount + amountToAdd;
-                
+                    
                 existingIngredientOrders.get(index).setAmountOrder(totalAmountOrder);
-                   
             } else {
-                existingIngredientOrders.add(iOrder);
+                    existingIngredientOrders.add(iOrder);
             }
+            
         } 
 
         
@@ -125,12 +126,13 @@ public class RcbShoppingListService {
 
     }
 
-    public int getIndexIngredientOrderInShoppingList(IngredientOrder i, ShoppingList shoppingList) {
-        List<IngredientOrder> existingIngredients = new ArrayList<>(shoppingList.getIngredientOrders());
-        
-        for(int index = 0; index < existingIngredients.size(); index++) {
-            if (i.getId().equals(existingIngredients.get(index).getId())) {
-                return index;
+
+    public int getIndexOfIOrderWithIngredientAlreadyExistsInShoppingList(IngredientOrder iOrder, ShoppingList shoppingList) {
+        List<IngredientOrder> existingIngredientOrders = new ArrayList<>(shoppingList.getIngredientOrders());
+
+        for (int i = 0; i<existingIngredientOrders.size(); i++) {
+            if (iOrder.getIngredient().getId() == existingIngredientOrders.get(i).getIngredient().getId()){
+                return i;
             }
         }
         return -1;
