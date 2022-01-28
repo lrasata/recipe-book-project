@@ -9,7 +9,7 @@
     <!--
         Added the entity ShoppingList.
     -->
-    <changeSet id="20220112205538" author="lrasata">
+    <changeSet id="20220112205538" author="lrasata" context="faker">
         <loadData
                   file="config/liquibase/fake-data/rel_recipe__ingredient.csv"
                   separator=";"

@@ -10,10 +10,12 @@ import com.project.recipebook.IntegrationTest;
 import com.project.recipebook.domain.Ingredient;
 import com.project.recipebook.domain.IngredientOrder;
 import com.project.recipebook.domain.ShoppingList;
+import com.project.recipebook.domain.User;
 import com.project.recipebook.domain.enumeration.ShoppingStatus;
 import com.project.recipebook.repository.IngredientOrderRepository;
 import com.project.recipebook.repository.IngredientRepository;
 import com.project.recipebook.repository.ShoppingListRepository;
+import com.project.recipebook.repository.UserRepository;
 import com.project.recipebook.web.rest.TestUtil;
 
 import java.util.ArrayList;
@@ -35,14 +37,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-/**
- * Integration tests for the {@link RcbShoppingListResource} REST controller.
- */
+
 @IntegrationTest
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
-class RcbShoppingListResourceIT {
+class RcbShoppingListResourceTest {
     private static final ShoppingStatus DEFAULT_SHOPPING_STATUS = ShoppingStatus.DRAFT;
     private static final ShoppingStatus UPDATED_SHOPPING_STATUS = ShoppingStatus.ORDERED;
 
@@ -54,6 +54,9 @@ class RcbShoppingListResourceIT {
 
     private static Random random = new Random();
     private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private ShoppingListRepository shoppingListRepository;
@@ -74,6 +77,8 @@ class RcbShoppingListResourceIT {
     private MockMvc restShoppingListMockMvc;
 
     private ShoppingList shoppingList;
+
+    private ShoppingList shoppingList2;
 
     public static Ingredient createIngredientEntity(EntityManager em) {
         Ingredient ingredient = new Ingredient().amount(DEFAULT_AMOUNT);
@@ -98,15 +103,22 @@ class RcbShoppingListResourceIT {
 
     @BeforeEach
     public void initTest() {
+
         Ingredient ingredient =  createIngredientEntity(em);
         ingredient = ingredientRepository.saveAndFlush(ingredient);
 
         IngredientOrder ingredientOrder = createIngredientOrderEntity(em);
-        ingredientOrder.setIngredient(ingredient);
-        ingredientOrderRepository.saveAndFlush(ingredientOrder);
+        ingredientOrder.setIngredient(ingredientRepository.findById(ingredient.getId()).get());
+        ingredientOrder = ingredientOrderRepository.saveAndFlush(ingredientOrder);
 
         shoppingList = createEntity(em);
-        shoppingList.addIngredientOrder(ingredientOrder);
+        shoppingList.setUser(userRepository.findOneByLogin("admin").get());
+        shoppingList.addIngredientOrder(ingredientOrderRepository.findById(ingredientOrder.getId()).get());
+
+       
+        shoppingList2 = createEntity(em);
+        shoppingList2.setUser(userRepository.findOneByLogin("admin").get());
+        shoppingList2.addIngredientOrder(ingredientOrderRepository.findById(ingredientOrder.getId()).get()); 
     }
 
     @Test
@@ -133,20 +145,16 @@ class RcbShoppingListResourceIT {
         int databaseSizeBeforeCreate = shoppingListRepository.findAll().size();
         // Create the ShoppingList
         restShoppingListMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(shoppingList)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(shoppingList2)))
             .andExpect(status().isCreated());
 
         // Validate the ShoppingList in the database
         List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
-        assertThat(shoppingListList).hasSize(databaseSizeBeforeCreate + 1);
+        assertThat(shoppingListList).hasSize(databaseSizeBeforeCreate);
         ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
         assertThat(testShoppingList.getShoppingStatus()).isEqualTo(DEFAULT_SHOPPING_STATUS);
         ShoppingList testShoppingListIngredientAmount = shoppingListList.get(shoppingListList.size() - 1);
         assertThat(testShoppingListIngredientAmount.getIngredientOrders()).isNotEmpty();
-
-        // As Ingredient is the same, should increase the amount of Ingredient 
-        IngredientOrder[] ingredientOrders = (IngredientOrder[]) testShoppingListIngredientAmount.getIngredientOrders().toArray();
-        assertThat(ingredientOrders[0].getIngredient().getName()).isEqualTo(DEFAULT_INGREDIENT_NAME);
     }
 
     @Test
@@ -155,11 +163,10 @@ class RcbShoppingListResourceIT {
         shoppingList.setShoppingStatus(ShoppingStatus.ORDERED);
         shoppingListRepository.saveAndFlush(shoppingList);
 
-        shoppingList.setShoppingStatus(ShoppingStatus.DRAFT);
         int databaseSizeBeforeCreate = shoppingListRepository.findAll().size();
         // Create the ShoppingList
         restShoppingListMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(shoppingList)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(shoppingList2)))
             .andExpect(status().isCreated());
 
         // Validate the ShoppingList in the database
@@ -357,34 +364,6 @@ class RcbShoppingListResourceIT {
         ShoppingList testShoppingList = shoppingListList.get(shoppingListList.size() - 1);
         assertThat(testShoppingList.getShoppingStatus()).isEqualTo(ShoppingStatus.ORDERED);
     }
-
-    @Test
-    @Transactional
-    void orderShoppingListMustContainListOfIngredients() throws Exception {
-        // Initialize the database
-        shoppingListRepository.saveAndFlush(shoppingList);
-
-        int databaseSizeBeforeUpdate = shoppingListRepository.findAll().size();
-
-        // Update the shoppingList
-        ShoppingList updatedShoppingList = shoppingListRepository.findById(shoppingList.getId()).get();
-        // Disconnect from session so that the updates on updatedShoppingList are not directly saved in db
-        em.detach(updatedShoppingList);
-        updatedShoppingList.setIngredientOrders(new HashSet<IngredientOrder>());
-
-        restShoppingListMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, updatedShoppingList.getId(), "order")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedShoppingList))
-            )
-            .andExpect(status().isBadRequest());
-
-        // Validate the ShoppingList in the database
-        List<ShoppingList> shoppingListList = shoppingListRepository.findAll();
-        assertThat(shoppingListList).hasSize(databaseSizeBeforeUpdate);
-    }
-
 
     @Test
     @Transactional

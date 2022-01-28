@@ -35,7 +35,7 @@ public class Recipe implements Serializable {
     private String imagePath;
 
     @OneToOne
-    @JoinColumn(unique = true)
+    @JoinColumn(unique = false)
     private User user;
 
     @ManyToMany
