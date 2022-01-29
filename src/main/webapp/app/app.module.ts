@@ -47,7 +47,13 @@ import { MyShoppingListModule } from './my-shopping-list/my-shopping-list.module
     { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
     httpInterceptorProviders,
   ],
-  declarations: [MainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent],
+  declarations: [
+    MainComponent, 
+    NavbarComponent, 
+    ErrorComponent, 
+    PageRibbonComponent, 
+    ActiveMenuDirective, 
+    FooterComponent],
   bootstrap: [MainComponent],
 })
 export class AppModule {

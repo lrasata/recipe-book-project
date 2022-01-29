@@ -1,0 +1,104 @@
+<div class="row justify-content-center">
+    <div class="col-12">
+      <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+        <h2 id="jhi-recipe-heading" data-cy="RecipeCreateUpdateHeading" jhiTranslate="recipebookApp.recipe.home.createOrEditLabel">
+          Create or edit a Recipe
+        </h2>
+        <jhi-alert-error></jhi-alert-error>
+  
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="recipebookApp.recipe.title" for="field_title">Title</label>
+                    <input type="text" class="form-control" name="title" id="field_title" data-cy="title" formControlName="title" />
+                    <div *ngIf="editForm.get('title')!.invalid && (editForm.get('title')!.dirty || editForm.get('title')!.touched)">
+                      <small class="form-text text-danger" *ngIf="editForm.get('title')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                      </small>
+                    </div>
+                  </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="recipebookApp.recipe.description" for="field_description">Description</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="description"
+                      id="field_description"
+                      data-cy="description"
+                      formControlName="description"
+                    />
+                  </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_user">User Creator</label>
+                    <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user">
+                      <option [ngValue]="null"></option>
+                      <option
+                        [ngValue]="userOption.id === editForm.get('user')!.value?.id ? editForm.get('user')!.value : userOption"
+                        *ngFor="let userOption of usersSharedCollection; trackBy: trackUserById"
+                      >
+                        {{ userOption.login }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label jhiTranslate="recipebookApp.recipe.ingredient" for="field_ingredients">Ingredient</label>
+                    <select
+                      class="form-control"
+                      id="field_ingredients"
+                      data-cy="ingredient"
+                      multiple
+                      name="ingredients"
+                      formControlName="ingredients"
+                    >
+                      <option
+                        [ngValue]="getSelectedIngredient(ingredientOption, editForm.get('ingredients')!.value)"
+                        *ngFor="let ingredientOption of ingredientsSharedCollection; trackBy: trackIngredientById"
+                      >
+                        {{ ingredientOption.name }}
+                      </option>
+                    </select>
+                  </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="recipebookApp.recipe.imagePath" for="field_imagePath">Image Path</label>
+                    <input [(ngModel)]="displayImagePath"   type="text" class="form-control" name="imagePath" id="field_imagePath" data-cy="imagePath" formControlName="imagePath" />
+                </div>
+                <div *ngIf="displayImagePath != ''">
+                    <img 
+                    src="{{displayImagePath}}"
+                    alt="image"
+                    class="img-responsive" 
+                    style="max-height: 50px;"/>
+                </div>
+
+            </div>
+        
+  
+
+  
+
+  
+
+
+        </div>
+  
+        <div>
+          <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+            <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+          </button>
+  
+          <button
+            type="submit"
+            id="save-entity"
+            data-cy="entityCreateSaveButton"
+            [disabled]="editForm.invalid || isSaving"
+            class="btn btn-primary"
+          >
+            <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
