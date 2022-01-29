@@ -11,9 +11,10 @@ import { IIngredient, Ingredient } from 'app/entities/ingredient/ingredient.mode
 import { ShoppingStatus } from 'app/entities/enumerations/shopping-status.model';
 import { IShoppingList, ShoppingList } from 'app/entities/shopping-list/shopping-list.model';
 import { MyShoppingListService } from '../my-shopping-list.service';
-import { IIngredientOrder, IngredientOrder } from 'app/entities/ingredient-order/ingredient-order.model';
+import { IngredientOrder } from 'app/entities/ingredient-order/ingredient-order.model';
 import { IngredientOrderService } from 'app/entities/ingredient-order/service/ingredient-order.service';
 import { IngredientService } from 'app/entities/ingredient/service/ingredient.service';
+import { ShoppingListService } from 'app/entities/shopping-list/service/shopping-list.service';
 
 @Component({
   selector: 'jhi-my-shopping-list-update',
@@ -37,7 +38,8 @@ export class MyShoppingListUpdateComponent implements OnInit {
   });
 
   constructor(
-    protected shoppingListService: MyShoppingListService,
+    protected myShoppingListService: MyShoppingListService,
+    protected shoppingListService: ShoppingListService,
     protected userService: UserService,
     protected ingredientService: IngredientService,
     protected ingredientOrderService: IngredientOrderService,
@@ -65,7 +67,7 @@ export class MyShoppingListUpdateComponent implements OnInit {
     this.isSaving = true;
     const shoppingList = this.createFromForm();
     if (shoppingList.id !== undefined) {
-      this.subscribeToSaveResponse(this.shoppingListService.update(shoppingList));
+      this.subscribeToSaveResponse(this.myShoppingListService.update(shoppingList));
     } 
   }
 
@@ -94,10 +96,21 @@ export class MyShoppingListUpdateComponent implements OnInit {
     shoppingList.ingredientOrders = ingredientOrders;
 
     if (shoppingList.id !== undefined) {
-      this.subscribeToSaveResponse(this.shoppingListService.update(shoppingList));
+      this.subscribeToSaveResponse(this.myShoppingListService.update(shoppingList));
     } 
   }
 
+  removeIngredientandSaveOverwriteShoppingList(ingredientOrder: IngredientOrder): void {
+    this.isSaving = true;
+    const shoppingList = this.createFromForm();
+    if (shoppingList.ingredientOrders) {
+      shoppingList.ingredientOrders = shoppingList.ingredientOrders.filter(obj => obj.id !== ingredientOrder.id);
+    }
+
+    if (shoppingList.id !== undefined) {
+      this.subscribeToSaveResponse(this.shoppingListService.update(shoppingList));
+    } 
+  }
   changeAmount(): void{
     this.isAmountOnChange = !this.isAmountOnChange;
   }
