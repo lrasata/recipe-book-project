@@ -110,8 +110,8 @@ public class RcbShoppingListResource {
             .body(result);
     }
 
-            /**
-     * {@code PUT  /shopping-lists/:id} : Updates an existing shoppingList.
+    /**
+     * {@code PUT  /shopping-lists/:id/order} : order shoppingList.
      *
      * @param id the id of the shoppingList to save.
      * @param shoppingList the shoppingList to update.
@@ -133,6 +133,32 @@ public class RcbShoppingListResource {
         ShoppingList result = rcbShoppingListService.order(id);
         return ResponseEntity
             .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * {@code POST  /shopping-lists/order-again} : order same shoppingList given in id.
+     *
+     * @param shoppingList the shoppingList to save.
+     * @return the {@link ResponseEntity} with status {@code 201 (created)} and with body the created shoppingList,
+     * or with status {@code 400 (Bad Request)} if the shoppingList is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the shoppingList couldn't be saved.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/shopping-lists/order-again")
+    public ResponseEntity<ShoppingList> orderAgainShoppingList(@Valid @RequestBody ShoppingList shoppingList) throws URISyntaxException {
+        log.debug("REST request to save ShoppingList : {}", shoppingList);
+        if (shoppingList.getId() != null) {
+            throw new BadRequestAlertException("A new shoppingList cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (shoppingList.getUser().getId() == null) {
+            throw new BadRequestAlertException("A new shoppingList must have User ", ENTITY_NAME,"usermustexist");
+        }
+
+        ShoppingList result = rcbShoppingListService.orderAgain(shoppingList);
+        return ResponseEntity
+            .created(new URI("/api/rcb/shopping-lists/" + result.getId()))
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }

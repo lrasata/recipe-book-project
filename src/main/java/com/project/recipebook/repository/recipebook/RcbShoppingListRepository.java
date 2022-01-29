@@ -28,4 +28,10 @@ public interface RcbShoppingListRepository extends ShoppingListRepository {
     "where shoppingList.user.login =:userLogin and shoppingList.shoppingStatus like 'ORDERED'")
     List<ShoppingList> findAllWithEagerRelationshipsOrderedByUserLogin(
         @Param("userLogin") String userLogin);
+
+    @Query("select shoppingList " + 
+        "from ShoppingList shoppingList left join fetch shoppingList.ingredientOrders " + 
+        "where shoppingList.id =:id")
+        ShoppingList findWithEagerRelationshipsById(
+            @Param("id") Long id);
 }

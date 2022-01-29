@@ -21,10 +21,19 @@ export class MyShoppingListService {
     }
 
     order(shoppingList: IShoppingList): Observable<EntityResponseType> {
-        return this.http.put<HttpResponse<IShoppingList>>(`${this.resourceUrl}/shopping-lists/${getShoppingListIdentifier(shoppingList) as number}/order`, {
+      return this.http.put<HttpResponse<IShoppingList>>(`${this.resourceUrl}/shopping-lists/${getShoppingListIdentifier(shoppingList) as number}/order`, {
           observe: 'response',
         });
-      }
+    }
+    
+    
+    orderAgain(shoppingList: IShoppingList): Observable<EntityResponseType> {
+      return this.http.post<IShoppingList>(`${this.resourceUrl}/shopping-lists/order-again`, 
+        shoppingList,
+        {
+          observe: 'response',
+        });
+    }
 
     queryByUserLogin(userLogin: string): Observable<EntityArrayResponseType> {
         return this.http.get<IShoppingList[]>(

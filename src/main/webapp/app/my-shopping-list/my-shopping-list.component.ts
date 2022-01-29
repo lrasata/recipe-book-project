@@ -60,6 +60,11 @@ export class MyShoppingListComponent implements OnInit, OnDestroy {
         this.subscribeToSaveResponse(this.myShoppingListService.order(shoppingList));
     }
 
+    orderAgain(shoppingList: ShoppingList): void {
+      shoppingList.id = undefined;
+      this.subscribeToSaveResponse(this.myShoppingListService.orderAgain(shoppingList));
+    }
+
 
     trackId(index: number, item: IShoppingList): number {
         return item.id!;

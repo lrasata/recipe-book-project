@@ -20,6 +20,8 @@ import com.project.recipebook.service.recipebook.error.TooManyShoppingListDraftE
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import liquibase.pro.packaged.lo;
+
 /**
  * Service class for managing custom shopping List
  */
@@ -93,6 +95,13 @@ public class RcbShoppingListService {
         existShoppingList.setShoppingStatus(ShoppingStatus.ORDERED);
 
         return this.rcbShoppingListRepository.save(existShoppingList);
+    }
+
+    
+    public ShoppingList orderAgain(ShoppingList newShoppingList) {
+        this.saveIngredientOrdersFromNewShoppingList(newShoppingList);
+        newShoppingList.setShoppingStatus(ShoppingStatus.ORDERED);
+        return this.rcbShoppingListRepository.save(newShoppingList);
     }
 
     public ShoppingList mergeIngredientOrdersOfTwoShoppingLists(ShoppingList existingShoppingList, ShoppingList newShoppingList) {
