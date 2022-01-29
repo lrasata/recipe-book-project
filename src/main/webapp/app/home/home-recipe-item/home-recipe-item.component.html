@@ -4,6 +4,7 @@
             <div class="col-md-6">
                 <h4 class="list-group-item-heading">{{recipe.title}}</h4>
                 <p class="list-group-item-text">{{recipe.description}}</p>
+                <button class="btn btn-sm btn-info" [routerLink]="['/rcb/recipe/', recipe.id, 'edit']">Edit</button>
             </div>
             <span class="col-md-6">
                 <img 

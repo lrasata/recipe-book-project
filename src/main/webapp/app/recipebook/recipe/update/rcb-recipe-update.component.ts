@@ -116,12 +116,14 @@ isImagePathFilled(): string {
       user: recipe.user,
       ingredients: recipe.ingredients,
     });
+    this.displayImagePath = this.editForm.get('imagePath')?.value;
 
     this.usersSharedCollection = this.userService.addUserToCollectionIfMissing(this.usersSharedCollection, recipe.user);
     this.ingredientsSharedCollection = this.ingredientService.addIngredientToCollectionIfMissing(
       this.ingredientsSharedCollection,
       ...(recipe.ingredients ?? [])
     );
+
   }
 
   protected loadRelationshipsOptions(): void {
