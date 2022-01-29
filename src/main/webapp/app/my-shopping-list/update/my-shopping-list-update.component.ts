@@ -7,11 +7,11 @@ import { finalize, map } from 'rxjs/operators';
 
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
-import { IIngredient } from 'app/entities/ingredient/ingredient.model';
+import { IIngredient, Ingredient } from 'app/entities/ingredient/ingredient.model';
 import { ShoppingStatus } from 'app/entities/enumerations/shopping-status.model';
 import { IShoppingList, ShoppingList } from 'app/entities/shopping-list/shopping-list.model';
 import { MyShoppingListService } from '../my-shopping-list.service';
-import { IIngredientOrder } from 'app/entities/ingredient-order/ingredient-order.model';
+import { IIngredientOrder, IngredientOrder } from 'app/entities/ingredient-order/ingredient-order.model';
 import { IngredientOrderService } from 'app/entities/ingredient-order/service/ingredient-order.service';
 import { IngredientService } from 'app/entities/ingredient/service/ingredient.service';
 
@@ -69,6 +69,35 @@ export class MyShoppingListUpdateComponent implements OnInit {
     } 
   }
 
+  addAndSaveIngredients(): void {
+    this.isSaving = true;
+    const shoppingList =  new ShoppingList();
+    shoppingList.id = this.editForm.get(['id'])!.value;
+    shoppingList.shoppingStatus = this.editForm.get(['shoppingStatus'])!.value;
+    shoppingList.user = this.editForm.get(['user'])!.value;
+
+    const ingredientList = this.editForm.get(['ingredients'])!.value;
+    const ingredientOrders: IngredientOrder[] = [];
+
+    for (const i of ingredientList) {
+      const iOrder = new IngredientOrder();
+
+      iOrder.ingredient = new Ingredient();
+      iOrder.ingredient.id = i.id;
+      iOrder.ingredient.amount = i.amount;
+      iOrder.ingredient.name = i.name;
+
+      iOrder.amountOrder = i.amount;
+      ingredientOrders.push(iOrder);
+      
+    }
+    shoppingList.ingredientOrders = ingredientOrders;
+
+    if (shoppingList.id !== undefined) {
+      this.subscribeToSaveResponse(this.shoppingListService.update(shoppingList));
+    } 
+  }
+
   changeAmount(): void{
     this.isAmountOnChange = !this.isAmountOnChange;
   }
@@ -77,11 +106,11 @@ export class MyShoppingListUpdateComponent implements OnInit {
     return item.id!;
   }
 
-  trackIngredientById(index: number, item: IIngredientOrder): number {
+  trackIngredientById(index: number, item: IIngredient): number {
     return item.id!;
   }
 
-  getSelectedIngredient(option: IIngredientOrder, selectedVals?: IIngredientOrder[]): IIngredientOrder {
+  getSelectedIngredient(option: IIngredient, selectedVals?: IIngredient[]): IIngredient {
     if (selectedVals) {
       for (const selectedVal of selectedVals) {
         if (option.id === selectedVal.id) {

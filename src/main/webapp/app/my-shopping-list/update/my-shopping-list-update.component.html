@@ -58,9 +58,9 @@
                 </tbody>
               </table>
         </div>
-        <button id="modify-ingredient" type="button" class="btn btn-info" (click)="onClickIngredientAddOrRemove()">Add ingredients</button>
       
-        <span *ngIf="isIngredientAddOrRemoveClicked">
+        <h3>Add Ingredients</h3>
+        <span >
             <div class="form-group" style="margin-top: 20px;">
               <label jhiTranslate="recipebookApp.recipe.ingredient" for="field_ingredients">Ingredient</label>
               <select
@@ -79,6 +79,7 @@
                 </option>
               </select>
               </div>
+          <button type="button" class="btn btn-sm btn-info" (click)="addAndSaveIngredients()">Add</button>
             
         </span>
     </div>
