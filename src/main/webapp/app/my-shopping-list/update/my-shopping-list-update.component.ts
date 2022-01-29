@@ -33,6 +33,7 @@ export class MyShoppingListUpdateComponent implements OnInit {
     shoppingStatus: [null, [Validators.required]],
     user: [],
     ingredientOrders: [],
+    ingredients: []
   });
 
   constructor(
@@ -48,7 +49,7 @@ export class MyShoppingListUpdateComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ shoppingList }) => {
       this.updateForm(shoppingList);
       this.initialShoppingList = shoppingList;
-      // this.loadRelationshipsOptions();
+      this.loadRelationshipsOptions();
     });
   }
   
@@ -128,13 +129,8 @@ export class MyShoppingListUpdateComponent implements OnInit {
       id: shoppingList.id,
       shoppingStatus: shoppingList.shoppingStatus,
       user: shoppingList.user,
-      ingredients: shoppingList.ingredientOrders,
+      ingredientOrders: shoppingList.ingredientOrders,
     });
-
-    this.ingredientsSharedCollection = this.ingredientService.addIngredientToCollectionIfMissing(
-      this.ingredientsSharedCollection,
-      ...(shoppingList.ingredientOrders ?? [])
-    );
   }
 
 

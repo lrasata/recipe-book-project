@@ -60,27 +60,27 @@
         </div>
         <button id="modify-ingredient" type="button" class="btn btn-info" (click)="onClickIngredientAddOrRemove()">Add ingredients</button>
       
-        <!-- <span *ngIf="isIngredientAddOrRemoveClicked">
+        <span *ngIf="isIngredientAddOrRemoveClicked">
             <div class="form-group" style="margin-top: 20px;">
-                <label jhiTranslate="recipebookApp.shoppingList.ingredient" for="field_ingredients">Ingredient</label>
-                <select
-                  class="form-control"
-                  id="field_ingredients"
-                  data-cy="ingredientOrder"
-                  multiple
-                  name="ingredientOrders"
-                  formControlName="ingredientOrders"
+              <label jhiTranslate="recipebookApp.recipe.ingredient" for="field_ingredients">Ingredient</label>
+              <select
+                class="form-control"
+                id="field_ingredients"
+                data-cy="ingredient"
+                multiple
+                name="ingredients"
+                formControlName="ingredients"
+              >
+                <option
+                  [ngValue]="getSelectedIngredient(ingredientOption, editForm.get('ingredients')!.value)"
+                  *ngFor="let ingredientOption of ingredientsSharedCollection; trackBy: trackIngredientById"
                 >
-                  <option
-                    [ngValue]="getSelectedIngredient(ingredientOption, editForm.get('ingredientOrders')!.value)"
-                    *ngFor="let ingredientOption of ingredientsSharedCollection; trackBy: trackIngredientById"
-                  >
-                    {{ ingredientOption.name }}
-                  </option>
-                </select>
+                  {{ ingredientOption.name }}
+                </option>
+              </select>
               </div>
             
-        </span> -->
+        </span>
     </div>
   
         <div style="margin-top: 20px;">
