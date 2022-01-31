@@ -5,7 +5,7 @@ node {
         checkout scm
     }
 
-    gitlabCommitStatus('build') {
+    githubCommitStatus('build') {
         stage('check java') {
             sh "java -version"
         }
