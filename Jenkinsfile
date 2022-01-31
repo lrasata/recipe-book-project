@@ -5,7 +5,7 @@ node {
         checkout scm
     }
 
-    docker.image('jhipster/jhipster:v7.5.0').inside('-u jhipster -e MAVEN_OPTS="-Duser.home=./"') {
+    gitlabCommitStatus('build') {
         stage('check java') {
             sh "java -version"
         }
@@ -37,8 +37,7 @@ node {
 
         stage('frontend tests') {
             try {
-               sh "npm install"
-               sh "npm test"
+                sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm -Dfrontend.npm.arguments='run test'"
             } catch(err) {
                 throw err
             } finally {
@@ -50,17 +49,5 @@ node {
             sh "./mvnw -ntp verify -P-webapp -Pprod -DskipTests"
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
-        stage('quality analysis') {
-            withSonarQubeEnv('sonar') {
-                sh "./mvnw -ntp initialize sonar:sonar"
-            }
-        }
-    }
-
-    def dockerImage
-    stage('publish docker') {
-        // A pre-requisite to this step is to setup authentication to the docker registry
-        // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
-        sh "./mvnw -ntp -Pprod verify jib:build"
     }
 }
